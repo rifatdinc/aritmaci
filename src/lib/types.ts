@@ -83,6 +83,13 @@ export const CATEGORY_LABELS: Record<ProductDoc['category'], string> = {
   filtre: 'Filtre & Bakım',
 }
 
+export const PRODUCT_IMAGES: Record<ProductDoc['category'], string> = {
+  evsel: '/images/evsel-ro.jpg',
+  kurumsal: '/images/kurumsal-ro.jpg',
+  yumusatma: '/images/yumusatma.jpg',
+  filtre: '/images/filtre-seti.jpg',
+}
+
 export const SECTOR_LABELS: Record<ReferenceDoc['sector'], string> = {
   'kamu-medya': 'Kamu & Medya',
   belediye: 'Belediye Kurumu',

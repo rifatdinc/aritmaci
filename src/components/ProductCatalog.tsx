@@ -1,164 +1,112 @@
 'use client'
 
-import { SpotlightCard } from '@/components/motion/Primitives'
+import { Tabs, TabsContent } from '@/components/ui/tabs'
+import { FluidFilterTabsList } from '@/components/FluidFilterTabsList'
 import {
   buildWhatsappUrl,
   CATEGORY_LABELS,
   getMediaUrl,
+  PRODUCT_IMAGES,
   type ProductDoc,
 } from '@/lib/types'
+import { Badge } from '@/components/ui/badge'
+import { Card, CardContent, CardFooter } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
 import { ArrowUpRight01Icon, WhatsappIcon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
-import { motion } from 'motion/react'
+import Image from 'next/image'
 import Link from 'next/link'
-import React, { useMemo, useState } from 'react'
+import { useState } from 'react'
 
-const EASE = [0.22, 1, 0.36, 1] as const
-
-type FilterKey = 'all' | ProductDoc['category']
-
-const FILTER_OPTIONS: { key: FilterKey; label: string }[] = [
-  { key: 'all', label: 'Tümü' },
-  { key: 'evsel', label: 'Evsel' },
-  { key: 'kurumsal', label: 'Kurumsal ve kafe' },
-  { key: 'yumusatma', label: 'Su yumuşatma' },
-  { key: 'filtre', label: 'Filtre ve bakım' },
+const filters = [
+  { value: 'all', label: 'Tümü' },
+  ...Object.entries(CATEGORY_LABELS).map(([value, label]) => ({ value, label })),
 ]
 
-const FALLBACK_IMAGE_BY_CAT: Record<ProductDoc['category'], string> = {
-  evsel: '/images/evsel-ro.jpg',
-  kurumsal: '/images/kurumsal-ro.jpg',
-  yumusatma: '/images/yumusatma.jpg',
-  filtre: '/images/filtre-seti.jpg',
+function ProductCards({
+  products,
+  whatsappNumber,
+}: {
+  products: ProductDoc[]
+  whatsappNumber: string
+}) {
+  if (!products.length) return <p className="empty-state">Bu kategoride henüz ürün yok.</p>
+
+  return (
+    <div className="product-grid">
+      {products.map((product) => {
+        const waHref = buildWhatsappUrl(
+          whatsappNumber,
+          `Merhaba, "${product.title}" için fiyat ve keşif bilgisi almak istiyorum.`,
+        )
+        const media = typeof product.image === 'object' ? product.image : null
+
+        return (
+          <Card key={product.id} className="group/product product-card h-full gap-0 py-0">
+            <Link href={`/urunler/${product.slug}`} className="product-link">
+              <div className="product-photo">
+                <Image
+                  src={getMediaUrl(media, PRODUCT_IMAGES[product.category])}
+                  alt=""
+                  fill
+                  sizes="(min-width: 1300px) 300px, (min-width: 1080px) 24vw, (min-width: 540px) 46vw, calc(100vw - 36px)"
+                  className="object-cover"
+                />
+                <span className="product-arrow">
+                  <HugeiconsIcon icon={ArrowUpRight01Icon} size={19} aria-hidden="true" />
+                </span>
+              </div>
+              <CardContent className="product-copy">
+                <Badge variant="secondary">{CATEGORY_LABELS[product.category]}</Badge>
+                <h3>{product.title}</h3>
+              </CardContent>
+            </Link>
+            <CardFooter className="product-meta">
+              <span>{product.capacity || product.stages || product.warranty}</span>
+              <Button variant="ghost" size="sm" asChild>
+                <a
+                  href={waHref}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`${product.title} için teklif al`}
+                >
+                  <HugeiconsIcon icon={WhatsappIcon} size={17} aria-hidden="true" /> Teklif al
+                </a>
+              </Button>
+            </CardFooter>
+          </Card>
+        )
+      })}
+    </div>
+  )
 }
 
 export function ProductCatalog({
   products,
-  whatsappNumber = '905365547180',
+  whatsappNumber,
   showFilters = true,
 }: {
   products: ProductDoc[]
-  whatsappNumber?: string
+  whatsappNumber: string
   showFilters?: boolean
 }) {
-  const [selected, setSelected] = useState<FilterKey>('all')
-
-  const filtered = useMemo(() => {
-    if (selected === 'all') return products
-    return products.filter((p) => p.category === selected)
-  }, [products, selected])
+  const [value, setValue] = useState('all')
+  if (!showFilters || !products.length)
+    return <ProductCards products={products} whatsappNumber={whatsappNumber} />
 
   return (
-    <div>
-      {showFilters && (
-        <div
-          className="mb-8 inline-flex flex-wrap items-center gap-1 rounded-xl border border-[var(--border)] bg-[var(--surface-raised)] p-1"
-          role="tablist"
-          aria-label="Ürün kategorileri"
-        >
-          {FILTER_OPTIONS.map((opt) => {
-            const isActive = selected === opt.key
-            return (
-              <button
-                key={opt.key}
-                type="button"
-                role="tab"
-                aria-selected={isActive}
-                onClick={() => setSelected(opt.key)}
-                className={`relative h-8 rounded-lg px-3 text-sm font-medium transition-colors duration-150 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] ${
-                  isActive
-                    ? 'text-[var(--primary-foreground)]'
-                    : 'text-[var(--text-secondary)] hover:text-[var(--foreground)]'
-                }`}
-              >
-                {isActive && (
-                  <motion.span
-                    layoutId="product-category-pill"
-                    transition={{ duration: 0.22, ease: EASE }}
-                    className="absolute inset-0 rounded-lg bg-[var(--primary)]"
-                  />
-                )}
-                <span className="relative z-10">{opt.label}</span>
-              </button>
-            )
-          })}
-        </div>
-      )}
-
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-        {filtered.map((product) => {
-          const imgUrl = getMediaUrl(product.image, FALLBACK_IMAGE_BY_CAT[product.category])
-          const waHref = buildWhatsappUrl(
-            whatsappNumber,
-            `Merhaba, "${product.title}" ürünü hakkında fiyat ve ücretsiz keşif bilgisi almak istiyorum.`,
-          )
-
-          return (
-            <SpotlightCard key={product.id} className="flex flex-col p-2">
-              <Link
-                href={`/urunler/${product.slug}`}
-                className="relative block aspect-[4/3] overflow-hidden rounded-lg bg-[var(--surface-raised)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]"
-              >
-                <img
-                  src={imgUrl}
-                  alt={product.title}
-                  loading="lazy"
-                  className="h-full w-full object-cover"
-                />
-                <span className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-lg border border-[var(--border)] bg-[var(--card)]/95 text-[var(--foreground)] transition-colors duration-150 group-hover:border-[var(--primary)] group-hover:bg-[var(--primary)] group-hover:text-[var(--primary-foreground)]">
-                  <HugeiconsIcon icon={ArrowUpRight01Icon} size={16} strokeWidth={1.5} />
-                </span>
-              </Link>
-
-              <div className="flex flex-1 flex-col justify-between p-4">
-                <div className="flex items-start justify-between gap-4">
-                  <div className="min-w-0">
-                    <Link href={`/urunler/${product.slug}`}>
-                      <h3 className="text-base font-medium leading-6 text-[var(--foreground)] transition-colors duration-150 group-hover:text-[var(--primary)]">
-                        {product.title}
-                      </h3>
-                    </Link>
-                    <p className="mt-1 text-sm text-[var(--text-secondary)]">
-                      {product.stages || CATEGORY_LABELS[product.category]}
-                    </p>
-                  </div>
-                  {product.capacity && (
-                    <span className="shrink-0 font-mono text-xs tabular-nums text-[var(--primary)]">
-                      {product.capacity}
-                    </span>
-                  )}
-                </div>
-
-                <div className="mt-4 flex items-center justify-between gap-4 border-t border-[var(--border)] pt-4">
-                  <span className="text-xs text-[var(--muted-foreground)]">
-                    {product.warranty || '2 yıl tam garanti'}
-                  </span>
-                  <div className="flex items-center gap-3">
-                    <Link
-                      href={`/urunler/${product.slug}`}
-                      className="text-xs font-medium text-[var(--text-secondary)] transition-colors duration-150 hover:text-[var(--foreground)]"
-                    >
-                      İncele
-                    </Link>
-                    <span className="text-[var(--border-strong)]" aria-hidden="true">
-                      /
-                    </span>
-                    <a
-                      href={waHref}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1.5 text-xs font-medium text-[var(--primary)] transition-colors duration-150 hover:text-[var(--primary-hover)]"
-                    >
-                      <HugeiconsIcon icon={WhatsappIcon} size={16} strokeWidth={1.5} />
-                      <span>Teklif al</span>
-                    </a>
-                  </div>
-                </div>
-              </div>
-            </SpotlightCard>
-          )
-        })}
-      </div>
-    </div>
+    <Tabs value={value} onValueChange={setValue} activationMode="manual" className="gap-5">
+      <FluidFilterTabsList label="Ürün kategorileri" tabs={filters} value={value} />
+      {filters.map(({ value }) => (
+        <TabsContent key={value} value={value}>
+          <ProductCards
+            products={
+              value === 'all' ? products : products.filter((product) => product.category === value)
+            }
+            whatsappNumber={whatsappNumber}
+          />
+        </TabsContent>
+      ))}
+    </Tabs>
   )
 }

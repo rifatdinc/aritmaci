@@ -6,162 +6,112 @@ import {
   getMediaUrl,
   getProductBySlug,
   getSiteSettings,
+  PRODUCT_IMAGES,
 } from '@/lib/cms'
-import {
-  ArrowLeft01Icon,
-  ArrowUpRight01Icon,
-  Call02Icon,
-  Tick02Icon,
-} from '@hugeicons/core-free-icons'
+import { ArrowLeft01Icon, Call02Icon, Tick02Icon, WhatsappIcon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
+import { Badge } from '@/components/ui/badge'
 import type { Metadata } from 'next'
+import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import React from 'react'
 
-export const dynamic = 'force-dynamic'
+type Props = { params: Promise<{ slug: string }> }
 
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ slug: string }>
-}): Promise<Metadata> {
-  const { slug } = await params
-  const product = await getProductBySlug(slug)
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const product = await getProductBySlug((await params).slug)
   if (!product) return { title: 'Ürün bulunamadı' }
-  return {
-    title: product.title,
-    description: product.summary,
-  }
+  return { title: product.title, description: product.summary }
 }
 
-export default async function ProductDetailPage({
-  params,
-}: {
-  params: Promise<{ slug: string }>
-}) {
+export default async function ProductDetailPage({ params }: Props) {
   const { slug } = await params
   const [product, settings] = await Promise.all([getProductBySlug(slug), getSiteSettings()])
-
   if (!product) notFound()
 
-  const fallbackImg =
-    product.category === 'kurumsal'
-      ? '/images/kurumsal-ro.jpg'
-      : product.category === 'yumusatma'
-        ? '/images/yumusatma.jpg'
-        : product.category === 'filtre'
-          ? '/images/filtre-seti.jpg'
-          : '/images/evsel-ro.jpg'
-
-  const imgUrl = getMediaUrl(product.image, fallbackImg)
+  const media = typeof product.image === 'object' ? product.image : null
   const waHref = buildWhatsappUrl(
     settings.whatsappNumber,
-    `Merhaba, "${product.title}" ürünü için fiyat ve ücretsiz keşif randevusu almak istiyorum.`,
+    `Merhaba, "${product.title}" için fiyat ve ücretsiz keşif randevusu almak istiyorum.`,
   )
   const telHref = `tel:${settings.phoneDisplay.replace(/\s+/g, '')}`
+  const specs = [
+    ['Kapasite', product.capacity],
+    ['Filtrasyon', product.stages],
+    ['Garanti', product.warranty],
+  ].filter(([, value]) => value)
 
   return (
     <>
-      <section className="bg-[var(--background)] py-12 sm:py-16">
-        <div className="mx-auto max-w-[1200px] px-6">
-          <Link
-            href="/urunler"
-            className="mb-8 inline-flex items-center gap-2 text-sm text-[var(--text-secondary)] transition-colors duration-150 hover:text-[var(--foreground)]"
-          >
-            <HugeiconsIcon icon={ArrowLeft01Icon} size={16} strokeWidth={1.5} />
-            <span>Tüm cihazlar</span>
-          </Link>
-
-          <div className="grid grid-cols-1 gap-12 lg:grid-cols-12">
-            <div className="lg:col-span-6">
-              <div className="overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--card)]">
-                <img
-                  src={imgUrl}
-                  alt={product.title}
-                  className="aspect-[4/3] w-full object-cover"
-                />
-              </div>
-            </div>
-
-            <div className="lg:col-span-6">
-              <span className="font-mono text-xs text-[var(--muted-foreground)]">
-                {CATEGORY_LABELS[product.category]}
-              </span>
-              <h1 className="mt-2 text-[28px] font-medium leading-[1.15] tracking-[-0.02em] text-[var(--foreground)] sm:text-[36px]">
-                {product.title}
-              </h1>
-              <p className="mt-4 text-base leading-7 text-[var(--text-secondary)]">
-                {product.description || product.summary}
-              </p>
-
-              <div className="mt-8 grid grid-cols-3 gap-4 border-y border-[var(--border)] py-5">
-                <div>
-                  <div className="text-xs text-[var(--muted-foreground)]">Kapasite</div>
-                  <div className="mt-1 font-mono text-sm font-medium tabular-nums text-[var(--foreground)]">
-                    {product.capacity || 'İhtiyaca özel'}
-                  </div>
-                </div>
-                <div>
-                  <div className="text-xs text-[var(--muted-foreground)]">Filtrasyon</div>
-                  <div className="mt-1 text-sm font-medium text-[var(--foreground)]">
-                    {product.stages || 'Çok aşamalı RO'}
-                  </div>
-                </div>
-                <div>
-                  <div className="text-xs text-[var(--muted-foreground)]">Garanti</div>
-                  <div className="mt-1 text-sm font-medium text-[var(--foreground)]">
-                    {product.warranty || '2 yıl'}
-                  </div>
-                </div>
-              </div>
-
-              {product.features && product.features.length > 0 && (
-                <div className="mt-8">
-                  <h2 className="text-sm font-medium text-[var(--foreground)]">
-                    Teknik özellikler
-                  </h2>
-                  <ul className="mt-3 space-y-3">
-                    {product.features.map((feat, idx) => (
-                      <li
-                        key={feat.id || idx}
-                        className="flex items-start gap-3 text-sm leading-6 text-[var(--text-secondary)]"
-                      >
-                        <span className="mt-1 flex w-4 shrink-0 justify-center text-[var(--primary)]">
-                          <HugeiconsIcon icon={Tick02Icon} size={16} strokeWidth={1.5} />
-                        </span>
-                        <span>{feat.text}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-
-              <p className="mt-6 text-xs text-[var(--muted-foreground)]">
-                {product.priceNote || 'Ücretsiz yerinde keşif ve montaj dahil'}
-              </p>
-
-              <div className="mt-4 flex flex-wrap gap-3">
-                <Button variant="ocean" size="lg" asChild>
-                  <a href={waHref} target="_blank" rel="noopener noreferrer">
-                    <span>WhatsApp&apos;tan fiyat al</span>
-                    <HugeiconsIcon icon={ArrowUpRight01Icon} size={16} strokeWidth={1.5} />
-                  </a>
-                </Button>
-                <Button variant="outline" size="lg" asChild>
-                  <a href={telHref}>
-                    <HugeiconsIcon icon={Call02Icon} size={16} strokeWidth={1.5} />
-                    <span className="font-mono tabular-nums">{settings.phoneDisplay}</span>
-                  </a>
-                </Button>
-              </div>
-            </div>
+      <div className="shell detail-page">
+        <Link href="/urunler" className="text-link back-link">
+          <HugeiconsIcon icon={ArrowLeft01Icon} size={18} aria-hidden="true" /> Tüm ürünler
+        </Link>
+        <div className="detail-layout">
+          <div className="detail-photo">
+            <Image
+              src={getMediaUrl(media, PRODUCT_IMAGES[product.category])}
+              alt={media?.alt || product.title}
+              fill
+              loading="eager"
+              fetchPriority="high"
+              sizes="(min-width: 1300px) 605px, (min-width: 960px) 48vw, calc(100vw - 36px)"
+              className="object-cover"
+            />
           </div>
+          <section className="detail-copy">
+            <div className="detail-chips">
+              <Badge variant="secondary">{CATEGORY_LABELS[product.category]}</Badge>
+              {product.badge && <Badge variant="outline">{product.badge}</Badge>}
+            </div>
+            <h1>{product.title}</h1>
+            <p>{product.description || product.summary}</p>
+            {!!specs.length && (
+              <dl className="detail-specs">
+                {specs.map(([label, value]) => (
+                  <div key={label}>
+                    <dt>{label}</dt>
+                    <dd>{value}</dd>
+                  </div>
+                ))}
+              </dl>
+            )}
+            {product.priceNote && <p className="price-note">{product.priceNote}</p>}
+            <div className="action-row">
+              <Button variant="default" asChild>
+                <a href={waHref} target="_blank" rel="noopener noreferrer">
+                  <HugeiconsIcon icon={WhatsappIcon} size={19} aria-hidden="true" />{' '}
+                  WhatsApp&apos;tan fiyat al
+                </a>
+              </Button>
+              <Button variant="outline" asChild>
+                <a href={telHref}>
+                  <HugeiconsIcon icon={Call02Icon} size={18} aria-hidden="true" />{' '}
+                  {settings.phoneDisplay}
+                </a>
+              </Button>
+            </div>
+          </section>
         </div>
-      </section>
+      </div>
 
-      <section className="border-t border-[var(--border)] bg-[var(--card)] py-16 sm:py-20">
-        <div className="mx-auto max-w-2xl px-6">
+      <section className="detail-lower">
+        <div className="shell detail-layout">
+          <div className="detail-features">
+            <h2>{product.features?.length ? 'Teknik özellikler' : 'Kurulum ve keşif'}</h2>
+            {product.features?.length ? (
+              <ul>
+                {product.features.map((feature) => (
+                  <li key={feature.id || feature.text}>
+                    <HugeiconsIcon icon={Tick02Icon} size={19} aria-hidden="true" />
+                    {feature.text}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p>Sistem seçimi ve kurulum için keşif talebi bırakabilirsiniz.</p>
+            )}
+          </div>
           <QuoteForm whatsappNumber={settings.whatsappNumber} defaultService={product.title} />
         </div>
       </section>

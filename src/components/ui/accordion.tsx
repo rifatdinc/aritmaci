@@ -1,62 +1,82 @@
 'use client'
 
+import * as React from 'react'
 import { cn } from '@/lib/utils'
-import { ArrowDown01Icon } from '@hugeicons/core-free-icons'
+import { Accordion as AccordionPrimitive } from 'radix-ui'
 import { HugeiconsIcon } from '@hugeicons/react'
-import * as AccordionPrimitive from '@radix-ui/react-accordion'
-import React from 'react'
+import { ArrowDown01Icon } from '@hugeicons/core-free-icons'
 
-export const Accordion = AccordionPrimitive.Root
-
-export function AccordionItem({
-  className,
-  ...props
-}: React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Item>) {
+function Accordion({ className, ...props }: React.ComponentProps<typeof AccordionPrimitive.Root>) {
   return (
-    <AccordionPrimitive.Item
-      className={cn('border-b border-[var(--border)]', className)}
+    <AccordionPrimitive.Root
+      data-slot="accordion"
+      className={cn('flex w-full flex-col', className)}
       {...props}
     />
   )
 }
 
-export function AccordionTrigger({
+function AccordionItem({
+  className,
+  ...props
+}: React.ComponentProps<typeof AccordionPrimitive.Item>) {
+  return (
+    <AccordionPrimitive.Item
+      data-slot="accordion-item"
+      className={cn('not-last:border-b', className)}
+      {...props}
+    />
+  )
+}
+
+function AccordionTrigger({
   className,
   children,
   ...props
-}: React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Trigger>) {
+}: React.ComponentProps<typeof AccordionPrimitive.Trigger>) {
   return (
     <AccordionPrimitive.Header className="flex">
       <AccordionPrimitive.Trigger
+        data-slot="accordion-trigger"
         className={cn(
-          'group flex flex-1 items-center justify-between gap-6 py-5 text-left text-base font-medium text-[var(--foreground)] transition-colors duration-150 hover:text-[var(--primary)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] rounded-md',
+          'group/accordion-trigger relative flex flex-1 items-start justify-between rounded-md border border-transparent py-4 text-left text-sm font-medium outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:after:border-ring disabled:pointer-events-none disabled:opacity-50 **:data-[slot=accordion-trigger-icon]:ml-auto **:data-[slot=accordion-trigger-icon]:size-4 **:data-[slot=accordion-trigger-icon]:text-muted-foreground',
           className,
         )}
         {...props}
       >
-        <span>{children}</span>
+        {children}
         <HugeiconsIcon
           icon={ArrowDown01Icon}
-          size={16}
-          strokeWidth={1.5}
-          className="shrink-0 text-[var(--muted-foreground)] transition-transform duration-150 ease-[cubic-bezier(0.22,1,0.36,1)] group-data-[state=open]:rotate-180 group-data-[state=open]:text-[var(--foreground)]"
+          strokeWidth={2}
+          data-slot="accordion-trigger-icon"
+          className="pointer-events-none shrink-0 group-aria-expanded/accordion-trigger:rotate-180"
         />
       </AccordionPrimitive.Trigger>
     </AccordionPrimitive.Header>
   )
 }
 
-export function AccordionContent({
+function AccordionContent({
   className,
   children,
   ...props
-}: React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Content>) {
+}: React.ComponentProps<typeof AccordionPrimitive.Content>) {
   return (
     <AccordionPrimitive.Content
-      className="overflow-hidden text-sm leading-6 text-[var(--text-secondary)] data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down"
+      data-slot="accordion-content"
+      className="overflow-hidden text-sm data-open:animate-accordion-down data-closed:animate-accordion-up"
       {...props}
     >
-      <div className={cn('pb-6 pr-8', className)}>{children}</div>
+      <div
+        className={cn(
+          'h-(--radix-accordion-content-height) pt-0 pb-4 [&_a]:underline [&_a]:underline-offset-3 [&_a]:hover:text-foreground [&_p:not(:last-child)]:mb-4',
+          className,
+        )}
+      >
+        {children}
+      </div>
     </AccordionPrimitive.Content>
   )
 }
+
+export { Accordion, AccordionItem, AccordionTrigger, AccordionContent }

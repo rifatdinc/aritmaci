@@ -1,14 +1,21 @@
 'use client'
 
+import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card'
+import { Field, FieldLabel } from '@/components/ui/field'
+import { Input } from '@/components/ui/input'
+import { NativeSelect, NativeSelectOption } from '@/components/ui/native-select'
+import { Textarea } from '@/components/ui/textarea'
 import { buildWhatsappUrl } from '@/lib/types'
-import { ArrowUpRight01Icon, CheckmarkCircle02Icon } from '@hugeicons/core-free-icons'
+import { ArrowRight01Icon, CheckmarkCircle02Icon, WhatsappIcon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 import React, { useState } from 'react'
+import { ThinkingOrb } from 'thinking-orbs'
 
 export function QuoteForm({
   whatsappNumber,
-  defaultService = 'Evsel 5 Aşamalı RO Sistemi',
+  defaultService = 'Yerinde Su Analizi & Keşif',
 }: {
   whatsappNumber: string
   defaultService?: string
@@ -43,8 +50,7 @@ export function QuoteForm({
         setFeedback({
           type: 'success',
           text:
-            data.message ||
-            'Talebiniz yönetim panelimize ulaştı. Aynı gün içinde sizi arayacağız.',
+            data.message || 'Talebiniz yönetim panelimize ulaştı. Aynı gün içinde sizi arayacağız.',
         })
         setFullName('')
         setPhone('')
@@ -68,148 +74,131 @@ export function QuoteForm({
     }`,
   )
 
-  const inputCls =
-    'h-10 w-full rounded-lg border border-[var(--input)] bg-[var(--background)] px-3 text-sm text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] transition-colors duration-150 focus:border-[var(--primary)] focus:bg-[var(--card)] focus:outline-none focus:ring-2 focus:ring-[var(--ring)]/20'
-
   return (
-    <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-6 sm:p-8">
-      <h3 className="text-xl font-medium text-[var(--foreground)]">
-        Ücretsiz keşif ve teklif formu
-      </h3>
-      <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">
-        Bilgilerinizi bırakın, aynı gün içinde sizi arayıp su analizi ve uygun sistem için bilgi
-        verelim.
-      </p>
+    <Card id="kesif-formu" className="quote-panel">
+      <CardHeader>
+        <h2 id="quote-heading">Keşif talebi</h2>
+        <CardDescription>Telefon numaranızı bırakın, randevu için sizi arayalım.</CardDescription>
+      </CardHeader>
+      <CardContent>
+        {feedback && (
+          <Alert
+            className="mb-4"
+            variant={feedback.type === 'error' ? 'destructive' : 'default'}
+            role={feedback.type === 'error' ? 'alert' : 'status'}
+          >
+            {feedback.type === 'success' && (
+              <HugeiconsIcon icon={CheckmarkCircle02Icon} size={20} aria-hidden="true" />
+            )}
+            <AlertDescription>{feedback.text}</AlertDescription>
+          </Alert>
+        )}
 
-      {feedback && (
-        <div
-          role="status"
-          className={`mt-6 flex items-start gap-3 rounded-lg border px-4 py-3 text-sm ${
-            feedback.type === 'success'
-              ? 'border-[var(--positive)]/25 bg-[var(--positive-soft)] text-[var(--foreground)]'
-              : 'border-[var(--negative)]/25 bg-[var(--negative-soft)] text-[var(--negative)]'
-          }`}
+        <form
+          onSubmit={handleSubmit}
+          method="post"
+          action="/api/quote"
+          className="quote-fields"
+          aria-labelledby="quote-heading"
         >
-          {feedback.type === 'success' && (
-            <HugeiconsIcon
-              icon={CheckmarkCircle02Icon}
-              size={16}
-              strokeWidth={1.5}
-              className="mt-0.5 shrink-0 text-[var(--positive)]"
-            />
-          )}
-          <span>{feedback.text}</span>
-        </div>
-      )}
-
-      <form onSubmit={handleSubmit} className="mt-6 space-y-4">
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <div>
-            <label
-              htmlFor="quote-name"
-              className="mb-2 block text-xs font-medium text-[var(--text-secondary)]"
-            >
-              Ad soyad *
-            </label>
-            <input
+          <Field className="gap-1.5">
+            <FieldLabel htmlFor="quote-name">
+              Ad soyad <span aria-hidden="true">*</span>
+            </FieldLabel>
+            <Input
               id="quote-name"
-              type="text"
+              name="fullName"
+              autoComplete="name"
               required
-              placeholder="Ad soyad"
-              className={inputCls}
+              className="field-control"
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
             />
-          </div>
-
-          <div>
-            <label
-              htmlFor="quote-phone"
-              className="mb-2 block text-xs font-medium text-[var(--text-secondary)]"
-            >
-              Telefon *
-            </label>
-            <input
+          </Field>
+          <Field className="gap-1.5">
+            <FieldLabel htmlFor="quote-phone">
+              Telefon <span aria-hidden="true">*</span>
+            </FieldLabel>
+            <Input
               id="quote-phone"
+              name="phone"
               type="tel"
+              autoComplete="tel"
               required
-              placeholder="0536 000 00 00"
-              className={`${inputCls} font-mono tabular-nums`}
+              className="field-control"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
             />
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <div>
-            <label
-              htmlFor="quote-district"
-              className="mb-2 block text-xs font-medium text-[var(--text-secondary)]"
-            >
-              İl / ilçe
-            </label>
-            <input
+          </Field>
+          <Field className="gap-1.5">
+            <FieldLabel htmlFor="quote-district">İl / ilçe</FieldLabel>
+            <Input
               id="quote-district"
-              type="text"
+              name="district"
               placeholder="Gölcük / Kocaeli"
-              className={inputCls}
+              className="field-control"
               value={district}
               onChange={(e) => setDistrict(e.target.value)}
             />
-          </div>
-
-          <div>
-            <label
-              htmlFor="quote-service"
-              className="mb-2 block text-xs font-medium text-[var(--text-secondary)]"
-            >
-              İlgilendiğiniz sistem
-            </label>
-            <select
+          </Field>
+          <Field className="gap-1.5">
+            <FieldLabel htmlFor="quote-service">İlgilendiğiniz sistem</FieldLabel>
+            <NativeSelect
               id="quote-service"
-              className={inputCls}
+              name="serviceType"
+              className="field-control"
               value={serviceType}
               onChange={(e) => setServiceType(e.target.value)}
             >
-              <option value="Evsel 5 Aşamalı RO Sistemi">Evsel 5 Aşamalı RO Sistemi</option>
-              <option value="Kurumsal / Kafe / Ofis RO Sistemi">Kurumsal / Kafe / Ofis RO</option>
-              <option value="Reçineli Su Yumuşatma Sistemi">Reçineli Su Yumuşatma</option>
-              <option value="Periyodik Filtre Değişimi / Bakım">Periyodik Filtre Değişimi</option>
-              <option value="Yerinde Su Analizi & Keşif">Yerinde Su Analizi ve Keşif</option>
-            </select>
+              {!services.some(([value]) => value === defaultService) && (
+                <NativeSelectOption value={defaultService}>{defaultService}</NativeSelectOption>
+              )}
+              {services.map(([value, label]) => (
+                <NativeSelectOption key={value} value={value}>
+                  {label}
+                </NativeSelectOption>
+              ))}
+            </NativeSelect>
+          </Field>
+          <Field className="form-wide gap-1.5">
+            <FieldLabel htmlFor="quote-message">
+              Eklemek istediğiniz not <span className="optional-label">(isteğe bağlı)</span>
+            </FieldLabel>
+            <Textarea
+              id="quote-message"
+              name="message"
+              rows={3}
+              className="field-control"
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+            />
+          </Field>
+          <div className="action-row form-wide">
+            <Button type="submit" variant="default" disabled={submitting}>
+              {submitting ? 'Gönderiliyor…' : 'Keşif talebi gönder'}
+              {submitting ? (
+                <ThinkingOrb state="working" size={20} theme="dark" aria-hidden="true" />
+              ) : (
+                <HugeiconsIcon icon={ArrowRight01Icon} size={17} aria-hidden="true" />
+              )}
+            </Button>
+            <Button variant="outline" asChild>
+              <a href={directWaUrl} target="_blank" rel="noopener noreferrer">
+                <HugeiconsIcon icon={WhatsappIcon} size={18} aria-hidden="true" /> WhatsApp&apos;tan
+                yaz
+              </a>
+            </Button>
           </div>
-        </div>
-
-        <div>
-          <label
-            htmlFor="quote-message"
-            className="mb-2 block text-xs font-medium text-[var(--text-secondary)]"
-          >
-            Kısa not (isteğe bağlı)
-          </label>
-          <textarea
-            id="quote-message"
-            rows={4}
-            placeholder="Mutfak dolabı, işletme kapasitesi veya uygun olduğunuz saat aralığı"
-            className="w-full rounded-lg border border-[var(--input)] bg-[var(--background)] p-3 text-sm text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] transition-colors duration-150 focus:border-[var(--primary)] focus:bg-[var(--card)] focus:outline-none focus:ring-2 focus:ring-[var(--ring)]/20"
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-          />
-        </div>
-
-        <div className="flex flex-wrap items-center gap-3 pt-2">
-          <Button type="submit" variant="ocean" size="md" disabled={submitting}>
-            {submitting ? 'Gönderiliyor' : 'Keşif talebi gönder'}
-          </Button>
-          <Button variant="outline" size="md" asChild>
-            <a href={directWaUrl} target="_blank" rel="noopener noreferrer">
-              <span>WhatsApp&apos;tan yaz</span>
-              <HugeiconsIcon icon={ArrowUpRight01Icon} size={16} strokeWidth={1.5} />
-            </a>
-          </Button>
-        </div>
-      </form>
-    </div>
+        </form>
+      </CardContent>
+    </Card>
   )
 }
+
+const services = [
+  ['Yerinde Su Analizi & Keşif', 'Yerinde su analizi ve keşif'],
+  ['Evsel 5 Aşamalı RO Sistemi', 'Evsel su arıtma'],
+  ['Kurumsal / Kafe / Ofis RO Sistemi', 'Kurumsal su arıtma'],
+  ['Reçineli Su Yumuşatma Sistemi', 'Su yumuşatma'],
+  ['Periyodik Filtre Değişimi / Bakım', 'Filtre değişimi ve bakım'],
+]

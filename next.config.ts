@@ -9,7 +9,7 @@ const dirname = path.dirname(__filename)
 const nextConfig: NextConfig = {
   ...(process.env.DOCKER_BUILD === '1' ? { output: 'standalone' as const } : {}),
   images: {
-    unoptimized: true,
+    qualities: [75, 85],
     localPatterns: [
       {
         pathname: '/api/media/file/**',
