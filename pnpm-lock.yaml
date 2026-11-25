@@ -5539,8 +5539,8 @@ packages:
   symbol-tree@3.2.4:
     resolution: {integrity: sha512-9QNk5KwDF+Bvz+PyObkmSYjI5ksVUYtjW7AU22r2NKcfLJcXp96hkDWU3+XndOsUb+AQ9QhfzfCT2O+CNWT5Tw==}
 
-  systeminformation@5.33.26:
-    resolution: {integrity: sha512-/AfmkcUh5/Zgul9vJgTzRqdyeeAkkZM857cXkN1CLzdj3gVvdij9EICcNcl3/nMGsr3A2uRvPmpCy2YX1A9uiQ==}
+  systeminformation@5.33.25:
+    resolution: {integrity: sha512-kSdv4FbVh87DT89E3WapR8K7M93XXtaOvuSZahA4MpCaXflsS9KOO40d7GsZkoIkvAJLmS67WanUORcoruvYtg==}
     engines: {node: '>=10.0.0'}
     os: [darwin, linux, win32, freebsd, openbsd, netbsd, sunos, android]
     hasBin: true
@@ -6314,7 +6314,7 @@ snapshots:
       object-treeify: 1.1.33
       open: 8.4.2
       picomatch: 4.0.7
-      systeminformation: 5.33.26
+      systeminformation: 5.33.25
       undici: 7.30.2
       which: 4.0.0
       yocto-spinner: 1.2.2
@@ -11868,7 +11868,7 @@ snapshots:
 
   symbol-tree@3.2.4: {}
 
-  systeminformation@5.33.26: {}
+  systeminformation@5.33.25: {}
 
   tabbable@6.5.2: {}
 
