@@ -18,6 +18,25 @@ test('opens the Aritman homepage and reaches the product catalog', async ({ page
   await expect(page.getByRole('heading', { level: 1, name: 'Su arıtma cihazları' })).toBeVisible()
 })
 
+test('floats the navigation after scrolling and keeps section links below it', async ({ page }) => {
+  await page.goto('http://localhost:3000')
+  const header = page.locator('.site-header')
+  const bar = header.locator('.header-inner')
+
+  await expect(header).toHaveAttribute('data-scrolled', 'false')
+  await header.getByRole('link', { name: 'Cihaz seçimi' }).click()
+  await expect(page).toHaveURL(/#cihaz-secimi$/)
+  await expect(header).toHaveAttribute('data-scrolled', 'true')
+  await expect.poll(async () => (await bar.boundingBox())?.y).toBeGreaterThan(8)
+
+  const heading = page.getByRole('heading', { name: 'Cihaz seçim rehberi' })
+  const headerBox = (await bar.boundingBox())!
+  expect((await heading.boundingBox())!.y).toBeGreaterThan(headerBox.y + headerBox.height)
+
+  await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }))
+  await expect(header).toHaveAttribute('data-scrolled', 'false')
+})
+
 test('fits all five filtration stages above the panel on a tablet', async ({ page }) => {
   await page.setViewportSize({ width: 768, height: 1024 })
   await page.goto('http://localhost:3000')
@@ -25,7 +44,10 @@ test('fits all five filtration stages above the panel on a tablet', async ({ pag
   const list = page.getByRole('tablist', { name: 'Arıtma aşamaları' })
   const membrane = list.getByRole('tab', { name: '04 RO membran' })
   const lastStage = list.getByRole('tab', { name: '05 Tat düzenleyici' })
-  await expect(list.getByRole('tab', { name: '01 Sediment' })).toHaveAttribute('aria-selected', 'true')
+  await expect(list.getByRole('tab', { name: '01 Sediment' })).toHaveAttribute(
+    'aria-selected',
+    'true',
+  )
   await list.scrollIntoViewIfNeeded()
 
   for (const tab of await list.getByRole('tab').all()) {
@@ -71,10 +93,14 @@ test('changes the water current between stages and respects reduced motion', asy
 
   await page.emulateMedia({ reducedMotion: 'reduce' })
   await expect(page.locator('.filtration-stream button')).toBeHidden()
-  expect(await track.evaluate((element) => element.getAnimations({ subtree: true }))).toHaveLength(0)
+  expect(await track.evaluate((element) => element.getAnimations({ subtree: true }))).toHaveLength(
+    0,
+  )
 })
 
-test('cycles the visible filtration stages every four seconds and can be paused', async ({ page }) => {
+test('cycles the visible filtration stages every four seconds and can be paused', async ({
+  page,
+}) => {
   await page.emulateMedia({ reducedMotion: 'no-preference' })
   await page.clock.install()
   await page.goto('http://localhost:3000')

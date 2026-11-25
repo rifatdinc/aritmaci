@@ -28,6 +28,9 @@
   --water-ink: #112c46;
   --water-navy: #0b2238;
   --water-primary: #164d75;
+  --water-editorial: #205d8e;
+  --water-line: #dce8ee;
+  --water-surface: #f5f9fc;
   --water-dark-detail: #bcd5e6;
   --gradient-space: ;
   --water-gradient: linear-gradient(
@@ -39,6 +42,7 @@
   --radius: 0.625rem;
   --gutter: clamp(1rem, 4vw, 2rem);
   --section-space: clamp(3rem, 6vw, 5.25rem);
+  --header-height: 4.25rem;
 }
 
 @supports (background: linear-gradient(in oklab, white, black)) {
@@ -91,9 +95,10 @@
     outline: none;
   }
   [id] {
-    scroll-margin-top: 5.5rem;
+    scroll-margin-top: 0.5rem;
   }
   html {
+    scroll-padding-block-start: calc(var(--header-height) + 1rem);
     scroll-padding-block-end: 1rem;
   }
   h1,
@@ -178,19 +183,53 @@
   transform: none;
 }
 
+.header-scroll-marker {
+  position: absolute;
+  inset: 0 auto auto 0;
+  inline-size: 1px;
+  block-size: 1.75rem;
+  pointer-events: none;
+}
 .site-header {
   position: sticky;
   top: 0;
   z-index: 40;
-  background: var(--background);
-  border-bottom: 1px solid var(--border);
+  pointer-events: none;
 }
 .header-inner {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  min-block-size: 4rem;
+  min-block-size: var(--header-height);
+  max-inline-size: 72rem;
+  padding-inline: clamp(0.6rem, 1.5vw, 1.05rem);
+  border: 1px solid transparent;
+  border-radius: 0;
+  background: var(--background);
+  pointer-events: auto;
+}
+.site-header[data-scrolled='true'] .header-inner {
+  max-inline-size: 65rem;
+  translate: 0 0.65rem;
+  border-color: #dbe8ef;
+  border-radius: 999px;
+  background: #f8fbfd;
+  box-shadow: 0 2px 5px #18334b0b, 0 12px 32px #18334b14;
+}
+@supports (backdrop-filter: blur(1px)) {
+  .site-header[data-scrolled='true'] .header-inner {
+    background: #f8fbfde8;
+    backdrop-filter: blur(16px) saturate(1.25);
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .header-inner {
+    transition-property: translate, max-inline-size, border-radius, border-color, background-color,
+      box-shadow;
+    transition-duration: var(--header-transition);
+    transition-timing-function: cubic-bezier(0.2, 0.72, 0.25, 1);
+  }
 }
 .brand {
   display: inline-flex;
@@ -248,6 +287,21 @@
   flex-wrap: wrap;
   align-items: center;
   gap: 0.15rem;
+}
+.site-nav {
+  padding: 0.17rem;
+  border: 1px solid #e2eaf0;
+  border-radius: 999px;
+  background: #fffffff0;
+}
+.site-nav .nav-hover-mark,
+.site-nav a,
+.header-cta,
+.mobile-menu > button {
+  border-radius: 999px;
+}
+.header-cta {
+  background: var(--water-ink);
 }
 .site-nav a,
 .sheet-nav a {
@@ -319,7 +373,7 @@
 .home-hero {
   position: relative;
   isolation: isolate;
-  background: var(--water-gradient) var(--water-mist);
+  background: radial-gradient(ellipse at 13% 85%, #edf8f9 0%, transparent 64%), #fcfeff;
   color: var(--water-ink);
 }
 .hero-copy {
@@ -344,11 +398,16 @@
 .hero-copy .action-row {
   margin-block-start: 0.35rem;
 }
+.hero-copy .action-row a {
+  border-radius: 999px;
+  padding-inline: 1.15rem;
+}
 .hero-copy .hero-primary {
-  background-color: var(--water-primary);
+  background: linear-gradient(112deg, #21548c, #176b80);
+  box-shadow: 0 4px 12px #164d7526;
 }
 .hero-copy .hero-primary:hover {
-  background-color: #133d62;
+  background: linear-gradient(112deg, #194575, #125b6d);
 }
 .hero-figure {
   position: relative;
@@ -1109,17 +1168,50 @@
   color: var(--muted-foreground);
   font-size: 0.73rem;
 }
-.about-layout p {
-  margin-top: 0.8rem;
+.about-section {
+  background: linear-gradient(135deg, #f8fcff, #fff 55%);
+}
+.about-layout {
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: clamp(1.5rem, 5vw, 4.5rem);
+  padding-block: clamp(0.3rem, 2.5vw, 2rem);
+}
+.about-copy {
+  padding-inline-start: clamp(1.5rem, 4vw, 3.5rem);
+  border-inline-start: 1px solid var(--water-line);
+}
+.about-founder {
+  display: grid;
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+  gap: 0.8rem 1.1rem;
+  margin-block-start: 1.8rem;
+  padding-block-start: 1.15rem;
+  border-block-start: 1px solid var(--water-line);
+  color: var(--muted-foreground);
+  font-size: 0.88rem;
   line-height: 1.6;
 }
-.about-layout aside {
-  border-inline-start: 2px solid var(--border);
-  padding: 0.25rem 0 0.25rem 1rem;
+.about-founder h3 {
+  color: var(--water-ink);
+  font-size: 1rem;
+  letter-spacing: -0.015em;
 }
-.about-layout .founder-role {
-  margin-top: 0.25rem;
+.founder-role {
+  margin-block-start: 0.2rem;
   font-size: 0.78rem;
+}
+@media (max-width: 44rem) {
+  .about-copy {
+    padding-inline-start: 0;
+    padding-block-start: 1.2rem;
+    border-inline-start: 0;
+    border-block-start: 1px solid var(--water-line);
+  }
+}
+@media (max-width: 27rem) {
+  .about-founder {
+    grid-template-columns: 1fr;
+  }
 }
 .faq-section {
   border-top: 1px solid var(--border);
@@ -1482,7 +1574,9 @@
 }
 .scenario-card {
   justify-content: space-between;
-  border: 1px solid #dde8ee;
+  border: 1px solid var(--water-line);
+  border-radius: 1.25rem;
+  background: linear-gradient(155deg, #fff 38%, var(--water-surface));
 }
 .scenario-card h3 {
   color: var(--water-ink);
@@ -1513,9 +1607,10 @@
   grid-template-rows: auto 1fr;
   min-inline-size: 0;
   overflow: clip;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-xl);
+  border: 1px solid var(--water-line);
+  border-radius: clamp(1.1rem, 2vw, 1.6rem);
   background: var(--card);
+  box-shadow: 0 3px 8px #112c4608, 0 15px 32px -18px #112c4636;
 }
 .installation-frame-image {
   position: relative;
@@ -1554,7 +1649,7 @@
 }
 
 .comparison-section {
-  background: #f9fbfd;
+  background: radial-gradient(ellipse at 90% 5%, #edf6fb, transparent 75%), #fbfdfe;
   border-block: 1px solid #e1edf3;
 }
 .comparison-scroll-hint {
@@ -1629,42 +1724,102 @@
   text-underline-offset: 0.18em;
 }
 
-.installation-steps {
+.editorial-title {
+  color: var(--water-ink);
+  font-size: clamp(2.15rem, 4.7vw, 4.35rem);
+  font-weight: 560;
+  letter-spacing: -0.047em;
+  line-height: 1.09;
+  text-wrap: pretty;
+}
+.editorial-title em {
+  display: block;
+  margin-block-start: 0.06em;
+  color: var(--water-editorial);
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 0.9em;
+  font-weight: 500;
+  letter-spacing: -0.05em;
+}
+.about-layout .editorial-title em {
+  text-wrap: balance;
+}
+.editorial-lead {
+  max-inline-size: 57ch;
+  color: #40586d;
+  font-size: clamp(1rem, 1.65vw, 1.21rem);
+  line-height: 1.68;
+  text-wrap: pretty;
+}
+.process-layout {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
-  gap: clamp(0.9rem, 3vw, 2rem);
+  align-items: center;
+  gap: clamp(1.55rem, 5vw, 4.5rem);
+}
+.process-photo {
+  position: relative;
+  aspect-ratio: 4 / 4.5;
+  overflow: clip;
+  border-radius: clamp(2.15rem, 5vw, 4.6rem) 0.85rem;
+  background: var(--water-navy);
+  box-shadow: 0 4px 10px #112c4614, 0 20px 42px -20px #112c4652;
+}
+.process-photo img {
+  object-position: 54% 58%;
+}
+.process-copy .editorial-lead {
+  margin-block: 0.85rem 1.35rem;
+}
+.process-card {
+  border: 1px solid var(--water-line);
+  border-radius: 1.25rem;
+  background: var(--water-surface);
+}
+.installation-steps {
+  padding: 0.3rem clamp(0.85rem, 2.2vw, 1.4rem);
 }
 .installation-steps li {
   display: grid;
-  align-content: start;
-  gap: 0.65rem;
-  border-block-start: 1px solid #d0e4ef;
-  padding-block: 1rem 0.5rem;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  column-gap: 0.85rem;
+  padding-block: 0.9rem;
+}
+.installation-steps li + li {
+  border-block-start: 1px solid var(--water-line);
 }
 .installation-steps li > span {
-  display: grid;
-  place-items: center;
-  inline-size: 2rem;
-  block-size: 2rem;
-  border-radius: 50%;
-  background: var(--water-mist);
-  color: var(--water-primary);
-  font-size: 0.875rem;
-  font-weight: 650;
+  padding-block-start: 0.14rem;
+  color: var(--water-editorial);
+  font-family: ui-monospace, monospace;
+  font-size: 0.76rem;
   font-variant-numeric: tabular-nums;
 }
-.installation-steps li h3 {
+.installation-steps h3 {
   color: var(--water-ink);
+  font-size: 1rem;
+  letter-spacing: -0.018em;
 }
-.installation-steps li p {
-  color: var(--muted-foreground);
-  font-size: 0.9rem;
-  line-height: 1.6;
+.installation-steps p {
+  margin-block-start: 0.26rem;
+  color: #40586d;
+  font-size: 0.875rem;
+  line-height: 1.55;
+}
+@media (min-width: 48rem) {
+  .process-layout {
+    grid-template-columns: minmax(0, 0.88fr) minmax(0, 1.12fr);
+  }
+  .process-photo {
+    grid-area: 1 / 1;
+  }
+  .process-copy {
+    grid-area: 1 / 2;
+  }
 }
 
 .assurance-section {
-  padding-block: clamp(2.25rem, 5vw, 3.7rem);
-  background: var(--water-gradient) var(--water-mist);
+  padding-block-end: var(--section-space);
   color: var(--water-ink);
 }
 .assurance-layout {
@@ -1672,6 +1827,10 @@
   align-items: center;
   grid-template-columns: minmax(0, 0.95fr) minmax(0, 2.05fr);
   gap: clamp(1.15rem, 3vw, 2.55rem);
+  padding: clamp(1.15rem, 4vw, 2.85rem);
+  border: 1px solid var(--water-line);
+  border-radius: clamp(1.1rem, 2.8vw, 2rem);
+  background: radial-gradient(ellipse at 0 0, #e9f6f6, transparent 70%), #f6fafc;
 }
 .assurance-layout h2 {
   font-size: clamp(1.7rem, 3.7vw, 2.65rem);
@@ -1680,15 +1839,17 @@
 .assurance-stats {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1.15rem 1rem;
+  gap: clamp(0.55rem, 1.5vw, 0.95rem);
 }
 .assurance-stats > div {
   display: flex;
   flex-direction: column-reverse;
   justify-content: start;
   gap: 0.3rem;
-  padding-inline-start: 0.85rem;
-  border-inline-start: 2px solid #7caec7;
+  padding: clamp(0.7rem, 2vw, 1.15rem);
+  border: 1px solid var(--water-line);
+  border-radius: 0.9rem;
+  background: #ffffffe3;
 }
 .assurance-stats dd {
   font-size: clamp(1.48rem, 3.2vw, 2.15rem);
@@ -1735,7 +1896,7 @@
 }
 .home-contact .contact-section {
   border-block-start: 0;
-  background: linear-gradient(136deg, #0b2238, #123b58);
+  background: radial-gradient(ellipse at 72% 5%, #234d68, transparent 72%), #102c44;
   color: #f7fbff;
 }
 .home-contact .contact-copy > p,

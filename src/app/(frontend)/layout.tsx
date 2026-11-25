@@ -1,4 +1,6 @@
 import '@fontsource-variable/geist'
+import '@fontsource/playfair-display/latin-500-italic.css'
+import '@fontsource/playfair-display/latin-ext-500-italic.css'
 import { SiteFooter } from '@/components/SiteFooter'
 import { SiteHeader } from '@/components/SiteHeader'
 import { buildWhatsappUrl, getSiteSettings } from '@/lib/cms'

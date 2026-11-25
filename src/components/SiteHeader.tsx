@@ -17,12 +17,13 @@ import {
   useRegisterFluidHoverItem,
   type UseFluidHoverReturn,
 } from '@/hooks/use-fluid-hover'
+import { spring } from '@/lib/springs'
 import type { SiteSettingsDoc } from '@/lib/types'
 import { ArrowUpRight01Icon, Call02Icon, Menu01Icon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { useRef } from 'react'
+import { useEffect, useRef, useState, type CSSProperties } from 'react'
 
 const navigation = [
   { href: '/urunler', label: 'Ürünler' },
@@ -92,50 +93,68 @@ function Navigation({ pathname, mobile = false }: { pathname: string; mobile?: b
 
 export function SiteHeader({ settings }: { settings: SiteSettingsDoc }) {
   const pathname = usePathname()
+  const scrollMarker = useRef<HTMLSpanElement>(null)
+  const [scrolled, setScrolled] = useState(false)
   const phoneHref = `tel:${settings.phoneDisplay.replace(/\s+/g, '')}`
 
+  useEffect(() => {
+    const marker = scrollMarker.current
+    if (!marker) return
+
+    const observer = new IntersectionObserver(([entry]) => setScrolled(!entry.isIntersecting))
+    observer.observe(marker)
+    return () => observer.disconnect()
+  }, [])
+
   return (
-    <header className="site-header">
-      <div className="shell header-inner">
-        <Brand settings={settings} />
-        <Navigation pathname={pathname} />
-        <Button className="header-cta" asChild>
-          <Link href="/iletisim#kesif-formu">
-            Ücretsiz keşif{' '}
-            <HugeiconsIcon icon={ArrowUpRight01Icon} data-icon="inline-end" aria-hidden="true" />
-          </Link>
-        </Button>
-        <div className="mobile-menu">
-          <Sheet>
-            <SheetTrigger asChild>
-              <Button size="icon-lg" variant="outline" aria-label="Menüyü aç">
-                <HugeiconsIcon icon={Menu01Icon} aria-hidden="true" />
-              </Button>
-            </SheetTrigger>
-            <SheetContent
-              aria-describedby={undefined}
-              className="w-[min(21rem,calc(100%-1rem))] overflow-y-auto"
-            >
-              <SheetHeader>
-                <SheetTitle>Menü</SheetTitle>
-              </SheetHeader>
-              <Navigation pathname={pathname} mobile />
-              <SheetFooter>
-                <SheetClose asChild>
-                  <Button asChild>
-                    <Link href="/iletisim#kesif-formu">Ücretsiz keşif</Link>
-                  </Button>
-                </SheetClose>
-                <Button variant="outline" asChild>
-                  <a href={phoneHref}>
-                    <HugeiconsIcon icon={Call02Icon} aria-hidden="true" /> {settings.phoneDisplay}
-                  </a>
+    <>
+      <span ref={scrollMarker} className="header-scroll-marker" aria-hidden="true" />
+      <header
+        className="site-header"
+        data-scrolled={scrolled}
+        style={{ '--header-transition': `${spring.slow.duration}s` } as CSSProperties}
+      >
+        <div className="shell header-inner">
+          <Brand settings={settings} />
+          <Navigation pathname={pathname} />
+          <Button className="header-cta" asChild>
+            <Link href="/iletisim#kesif-formu">
+              Ücretsiz keşif{' '}
+              <HugeiconsIcon icon={ArrowUpRight01Icon} data-icon="inline-end" aria-hidden="true" />
+            </Link>
+          </Button>
+          <div className="mobile-menu">
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button size="icon-lg" variant="outline" aria-label="Menüyü aç">
+                  <HugeiconsIcon icon={Menu01Icon} aria-hidden="true" />
                 </Button>
-              </SheetFooter>
-            </SheetContent>
-          </Sheet>
+              </SheetTrigger>
+              <SheetContent
+                aria-describedby={undefined}
+                className="w-[min(21rem,calc(100%-1rem))] overflow-y-auto"
+              >
+                <SheetHeader>
+                  <SheetTitle>Menü</SheetTitle>
+                </SheetHeader>
+                <Navigation pathname={pathname} mobile />
+                <SheetFooter>
+                  <SheetClose asChild>
+                    <Button asChild>
+                      <Link href="/iletisim#kesif-formu">Ücretsiz keşif</Link>
+                    </Button>
+                  </SheetClose>
+                  <Button variant="outline" asChild>
+                    <a href={phoneHref}>
+                      <HugeiconsIcon icon={Call02Icon} aria-hidden="true" /> {settings.phoneDisplay}
+                    </a>
+                  </Button>
+                </SheetFooter>
+              </SheetContent>
+            </Sheet>
+          </div>
         </div>
-      </div>
-    </header>
+      </header>
+    </>
   )
 }

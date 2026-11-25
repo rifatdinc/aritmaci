@@ -8,6 +8,7 @@ import { InstallationGallery, ProductComparison, UsageScenarios } from '@/compon
 import { ProductCatalog } from '@/components/ProductCatalog'
 import { ReferenceGrid } from '@/components/ReferenceGrid'
 import { Button } from '@/components/ui/button'
+import { Card, CardContent } from '@/components/ui/card'
 import {
   getFaqs,
   getMediaUrl,
@@ -18,6 +19,7 @@ import {
 } from '@/lib/cms'
 import { ArrowUpRight01Icon, CheckmarkCircle02Icon, StarIcon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
+import Image from 'next/image'
 import Link from 'next/link'
 
 const installationSteps = [
@@ -47,6 +49,8 @@ export default async function HomePage() {
     getFaqs(),
   ])
   const homeProducts = products.slice(0, 4)
+  const aboutHeading = settings.aboutHeading || 'Arıtman hakkında'
+  const aboutTitle = aboutHeading.match(/^([^:]+):\s+(.+)$/)
   const directory = references.filter(
     (ref) => !ref.image || typeof ref.image !== 'object' || !ref.image.url,
   )
@@ -106,20 +110,39 @@ export default async function HomePage() {
       <ProductComparison products={homeProducts} />
 
       <section id="nasil-calisir" className="page-section" aria-labelledby="process-heading">
-        <div className="shell">
-          <div className="centered-heading">
-            <h2 id="process-heading">Keşiften montaja</h2>
-            <p>İlk ölçümden filtre değişimine kadar süreç nasıl ilerliyor?</p>
+        <div className="shell process-layout">
+          <div className="process-copy">
+            <h2 id="process-heading" className="editorial-title">
+              Keşiften <em>montaja</em>
+            </h2>
+            <p className="editorial-lead">
+              İlk ölçümden filtre değişimine kadar süreç nasıl ilerliyor?
+            </p>
+            <Card className="process-card gap-0 py-0">
+              <CardContent className="px-0">
+                <ol className="installation-steps">
+                  {installationSteps.map(({ title, detail }, index) => (
+                    <li key={title}>
+                      <span aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
+                      <div>
+                        <h3>{title}</h3>
+                        <p>{detail}</p>
+                      </div>
+                    </li>
+                  ))}
+                </ol>
+              </CardContent>
+            </Card>
           </div>
-          <ol className="installation-steps">
-            {installationSteps.map(({ title, detail }, index) => (
-              <li key={title}>
-                <span aria-hidden="true">{index + 1}</span>
-                <h3>{title}</h3>
-                <p>{detail}</p>
-              </li>
-            ))}
-          </ol>
+          <figure className="process-photo">
+            <Image
+              src="/images/hero-navy-faucet.jpg"
+              alt="Arıtma musluğundan cam bardağa dolan su"
+              fill
+              sizes="(min-width: 76rem) 460px, (min-width: 48rem) 40vw, calc(100vw - 32px)"
+              className="object-cover"
+            />
+          </figure>
         </div>
       </section>
 
@@ -244,19 +267,33 @@ export default async function HomePage() {
         </section>
       )}
 
-      <section id="hakkimizda" className="page-section about-section">
+      <section
+        id="hakkimizda"
+        className="page-section about-section"
+        aria-labelledby="about-heading"
+      >
         <div className="shell about-layout">
-          <div>
-            <h2>{settings.aboutHeading}</h2>
-            <p>{settings.aboutBody}</p>
+          <h2 id="about-heading" className="editorial-title">
+            {aboutTitle ? (
+              <>
+                {aboutTitle[1]} <em>{aboutTitle[2]}</em>
+              </>
+            ) : (
+              aboutHeading
+            )}
+          </h2>
+          <div className="about-copy">
+            <p className="editorial-lead">{settings.aboutBody}</p>
+            {settings.founderName && (
+              <div className="about-founder">
+                <div>
+                  <h3>{settings.founderName}</h3>
+                  {settings.founderRole && <p className="founder-role">{settings.founderRole}</p>}
+                </div>
+                {settings.founderBio && <p>{settings.founderBio}</p>}
+              </div>
+            )}
           </div>
-          {settings.founderName && (
-            <aside>
-              <h3>{settings.founderName}</h3>
-              <p className="founder-role">{settings.founderRole}</p>
-              <p>{settings.founderBio}</p>
-            </aside>
-          )}
         </div>
       </section>
 
