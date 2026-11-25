@@ -1,0 +1,8 @@
+node_modules
+.next
+.git
+data/*.db*
+media/*
+!media/.gitkeep
+.env
+*.log

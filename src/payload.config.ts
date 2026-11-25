@@ -1,12 +1,20 @@
 import { sqliteAdapter } from '@payloadcms/db-sqlite'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
+import { en } from '@payloadcms/translations/languages/en'
+import { tr } from '@payloadcms/translations/languages/tr'
 import path from 'path'
 import { buildConfig } from 'payload'
-import { fileURLToPath } from 'url'
 import sharp from 'sharp'
+import { fileURLToPath } from 'url'
 
-import { Users } from './collections/Users'
+import { Faqs } from './collections/Faqs'
 import { Media } from './collections/Media'
+import { Products } from './collections/Products'
+import { QuoteRequests } from './collections/QuoteRequests'
+import { References } from './collections/References'
+import { Testimonials } from './collections/Testimonials'
+import { Users } from './collections/Users'
+import { SiteSettings } from './globals/SiteSettings'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -17,16 +25,24 @@ export default buildConfig({
     importMap: {
       baseDir: path.resolve(dirname),
     },
+    meta: {
+      titleSuffix: '— Aritman Yönetim Paneli',
+    },
   },
-  collections: [Users, Media],
+  i18n: {
+    fallbackLanguage: 'tr',
+    supportedLanguages: { tr, en },
+  },
+  collections: [Products, References, Testimonials, Faqs, QuoteRequests, Media, Users],
+  globals: [SiteSettings],
   editor: lexicalEditor(),
-  secret: process.env.PAYLOAD_SECRET || '',
+  secret: process.env.PAYLOAD_SECRET || 'aritman-dev-secret-change-in-production',
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },
   db: sqliteAdapter({
     client: {
-      url: process.env.DATABASE_URL || '',
+      url: process.env.DATABASE_URL || 'file:./data/aritman.db',
     },
   }),
   sharp,

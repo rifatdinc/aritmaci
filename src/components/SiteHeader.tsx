@@ -1,0 +1,146 @@
+'use client'
+
+import { Button } from '@/components/ui/button'
+import { buildWhatsappUrl, getMediaUrl, type SiteSettingsDoc } from '@/lib/types'
+import {
+  Call02Icon,
+  Cancel01Icon,
+  DropletIcon,
+  Menu01Icon,
+  WhatsappIcon,
+} from '@hugeicons/core-free-icons'
+import { HugeiconsIcon } from '@hugeicons/react'
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+import React, { useState } from 'react'
+
+const NAV_ITEMS = [
+  { href: '/urunler', label: 'Cihazlar' },
+  { href: '/#cihaz-secimi', label: 'Cihaz Seçimi' },
+  { href: '/referanslar', label: 'Referanslar' },
+  { href: '/#filtre-bakim', label: 'Filtre Kontrolü' },
+  { href: '/#sss', label: 'SSS' },
+]
+
+export function SiteHeader({ settings }: { settings: SiteSettingsDoc }) {
+  const pathname = usePathname()
+  const [menuOpen, setMenuOpen] = useState(false)
+
+  const customLogo =
+    settings.logo && typeof settings.logo === 'object' && settings.logo.url
+      ? getMediaUrl(settings.logo)
+      : null
+
+  const telHref = `tel:${settings.phoneDisplay.replace(/\s+/g, '')}`
+  const waHref = buildWhatsappUrl(
+    settings.whatsappNumber,
+    'Merhaba, su arıtma sistemleri ve ücretsiz keşif hakkında bilgi almak istiyorum.',
+  )
+
+  return (
+    <header className="sticky top-0 z-50 border-b border-slate-200/75 bg-white/88 backdrop-blur-xl">
+      <div className="mx-auto flex h-16 max-w-[1200px] items-center justify-between gap-6 px-5 sm:px-6">
+        <Link
+          href="/"
+          className="group flex shrink-0 items-center gap-2.5"
+          aria-label={settings.companyName}
+        >
+          {customLogo ? (
+            <img src={customLogo} alt={settings.companyName} className="h-8 w-auto object-contain" />
+          ) : (
+            <>
+              <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-sky-500 to-sky-700 text-white shadow-[0_2px_10px_rgba(2,132,199,0.3)] transition-transform duration-200 group-hover:scale-105">
+                <HugeiconsIcon icon={DropletIcon} size={16} strokeWidth={2.2} />
+              </span>
+              <span className="text-[16.5px] font-semibold tracking-tight text-zinc-950">
+                Aritman<span className="text-sky-600">.</span>
+              </span>
+            </>
+          )}
+        </Link>
+
+        <nav aria-label="Ana menü" className="hidden lg:block">
+          <ul className="flex items-center gap-7">
+            {NAV_ITEMS.map((item) => {
+              const isActive = !item.href.startsWith('/#') && pathname.startsWith(item.href)
+              return (
+                <li key={item.href}>
+                  <Link
+                    href={item.href}
+                    className={`text-[14px] transition-colors ${
+                      isActive
+                        ? 'font-semibold text-sky-600'
+                        : 'text-slate-600 hover:text-zinc-950'
+                    }`}
+                  >
+                    {item.label}
+                  </Link>
+                </li>
+              )
+            })}
+          </ul>
+        </nav>
+
+        <div className="hidden items-center gap-2 lg:flex">
+          <Button variant="outline" size="sm" asChild>
+            <Link href="/iletisim">İletişim</Link>
+          </Button>
+          <Button variant="ocean" size="sm" asChild>
+            <a href={waHref} target="_blank" rel="noopener noreferrer">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-300" />
+              <span>Ücretsiz Keşif</span>
+            </a>
+          </Button>
+        </div>
+
+        <button
+          type="button"
+          className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 bg-white text-zinc-950 lg:hidden cursor-pointer"
+          aria-label={menuOpen ? 'Menüyü kapat' : 'Menüyü aç'}
+          aria-expanded={menuOpen}
+          onClick={() => setMenuOpen((prev) => !prev)}
+        >
+          <HugeiconsIcon icon={menuOpen ? Cancel01Icon : Menu01Icon} size={18} strokeWidth={1.8} />
+        </button>
+      </div>
+
+      {menuOpen && (
+        <div className="border-t border-slate-200 bg-white px-5 pb-5 pt-2 lg:hidden">
+          <div className="flex flex-col divide-y divide-slate-100">
+            {NAV_ITEMS.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={() => setMenuOpen(false)}
+                className="py-3 text-sm font-medium text-zinc-950"
+              >
+                {item.label}
+              </Link>
+            ))}
+            <Link
+              href="/iletisim"
+              onClick={() => setMenuOpen(false)}
+              className="py-3 text-sm font-medium text-zinc-950"
+            >
+              İletişim
+            </Link>
+          </div>
+          <div className="mt-4 grid grid-cols-2 gap-2">
+            <Button variant="outline" size="sm" asChild>
+              <a href={telHref}>
+                <HugeiconsIcon icon={Call02Icon} size={15} strokeWidth={1.8} />
+                <span>Ara</span>
+              </a>
+            </Button>
+            <Button variant="whatsapp" size="sm" asChild>
+              <a href={waHref} target="_blank" rel="noopener noreferrer">
+                <HugeiconsIcon icon={WhatsappIcon} size={15} strokeWidth={1.8} />
+                <span>WhatsApp</span>
+              </a>
+            </Button>
+          </div>
+        </div>
+      )}
+    </header>
+  )
+}

@@ -7,10 +7,15 @@ const __filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(__filename)
 
 const nextConfig: NextConfig = {
+  ...(process.env.DOCKER_BUILD === '1' ? { output: 'standalone' as const } : {}),
   images: {
+    unoptimized: true,
     localPatterns: [
       {
         pathname: '/api/media/file/**',
+      },
+      {
+        pathname: '/images/**',
       },
     ],
   },

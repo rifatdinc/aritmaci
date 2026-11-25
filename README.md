@@ -1,67 +1,56 @@
-# Payload Blank Template
+# Aritman Su Arıtma Sistemleri — Web Sitesi & Türkçe CMS
 
-This template comes configured with the bare minimum to get started on anything you need.
+Next.js 16 + Payload CMS 3 + SQLite ile geliştirilmiş, dış servis bağımlılığı olmayan, tek Docker container üzerinde çalışabilen modern kurumsal web sitesi ve Türkçe yönetim paneli.
 
-## Quick start
+## Özellikler
+- **Modern, hızlı kurumsal vitrin:** Ana sayfa, kategorili ürün kataloğu (`/urunler`), ürün detay sayfaları (`/urunler/[slug]`), sektör filtreli referanslar (`/referanslar`) ve iletişim/keşif sayfası (`/iletisim`).
+- **İnteraktif araçlar:** 2 adımlı Cihaz Seçim Rehberi ve Filtre Bakım Tarihi Hesaplayıcı.
+- **%100 Türkçe Yönetim Paneli (`/admin`):**
+  - **Ürünler & Cihazlar:** Yeni cihaz ekleme, fotoğraf yükleme, teknik özellik ve kapasite güncelleme.
+  - **Referanslar & Montajlar:** Kurumsal referans ve fotoğraflı montaj galerisi yönetimi.
+  - **Müşteri Yorumları** & **Sık Sorulan Sorular (SSS)**.
+  - **Teklif & Keşif Talepleri:** Sitedeki formdan gelen tüm müşteri talepleri panelde toplanır ve durum takibi (`Yeni Talep`, `Arandı`, `Keşif Planlandı`, `Tamamlandı`) yapılır.
+  - **Site Ayarları:** Telefon, WhatsApp numarası, adres, çalışma saatleri, özel logo ve ana sayfa metinleri tek yerden güncellenir.
 
-This template can be deployed directly from our Cloud hosting and it will setup MongoDB and cloud S3 object storage for media.
+## Yerel Geliştirme
 
-## Quick Start - local setup
+```bash
+pnpm install
+cp .env.example .env
+pnpm seed        # Örnek veriler, görseller ve ilk yönetici hesabını oluşturur
+pnpm dev         # http://localhost:3000 ve http://localhost:3000/admin
+```
 
-To spin up this template locally, follow these steps:
+Varsayılan ilk yönetici (kurulum sonrası panelden şifreyi değiştirin):
+- **E-posta:** `admin@aritman.com.tr`
+- **Şifre:** `Aritman2026!`
 
-### Clone
+## VPS / Docker ile Yayına Alma
 
-After you click the `Deploy` button above, you'll want to have standalone copy of this repo on your machine. If you've already cloned this repo, skip to [Development](#development).
+1. Sunucuda `.env` dosyasını oluşturun:
+   ```bash
+   cp .env.example .env
+   # PAYLOAD_SECRET için güçlü anahtar üretin:
+   openssl rand -hex 32
+   ```
+2. Kalıcı veri klasörlerini oluşturup mevcut veritabanı/medya varsa kopyalayın:
+   ```bash
+   mkdir -p data media
+   ```
+3. Tek komutla derleyip başlatın:
+   ```bash
+   docker compose up -d --build
+   ```
+4. Caddy veya Nginx ile `aritman.com.tr` domainini `http://127.0.0.1:3000` adresine yönlendirin (otomatik HTTPS).
+   Caddy örneği:
+   ```caddy
+   aritman.com.tr, www.aritman.com.tr {
+       reverse_proxy 127.0.0.1:3000
+   }
+   ```
 
-### Development
-
-1. First [clone the repo](#clone) if you have not done so already
-2. `cd my-project && cp .env.example .env` to copy the example environment variables. You'll need to add the `MONGODB_URL` from your Cloud project to your `.env` if you want to use S3 storage and the MongoDB database that was created for you.
-
-3. `pnpm install && pnpm dev` to install dependencies and start the dev server
-4. open `http://localhost:3000` to open the app in your browser
-
-That's it! Changes made in `./src` will be reflected in your app. Follow the on-screen instructions to login and create your first admin user. Then check out [Production](#production) once you're ready to build and serve your app, and [Deployment](#deployment) when you're ready to go live.
-
-#### Docker (Optional)
-
-If you prefer to use Docker for local development instead of a local MongoDB instance, the provided docker-compose.yml file can be used.
-
-To do so, follow these steps:
-
-- Modify the `MONGODB_URL` in your `.env` file to `mongodb://127.0.0.1/<dbname>`
-- Modify the `docker-compose.yml` file's `MONGODB_URL` to match the above `<dbname>`
-- Run `docker-compose up` to start the database, optionally pass `-d` to run in the background.
-
-## How it works
-
-The Payload config is tailored specifically to the needs of most websites. It is pre-configured in the following ways:
-
-### Collections
-
-See the [Collections](https://payloadcms.com/docs/configuration/collections) docs for details on how to extend this functionality.
-
-- #### Users (Authentication)
-
-  Users are auth-enabled collections that have access to the admin panel.
-
-  For additional help, see the official [Auth Example](https://github.com/payloadcms/payload/tree/3.x/examples/auth) or the [Authentication](https://payloadcms.com/docs/authentication/overview#authentication-overview) docs.
-
-- #### Media
-
-  This is the uploads enabled collection. It features pre-configured sizes, focal point and manual resizing to help you manage your pictures.
-
-### Docker
-
-Alternatively, you can use [Docker](https://www.docker.com) to spin up this template locally. To do so, follow these steps:
-
-1. Follow [steps 1 and 2 from above](#development), the docker-compose file will automatically use the `.env` file in your project root
-1. Next run `docker-compose up`
-1. Follow [steps 4 and 5 from above](#development) to login and create your first admin user
-
-That's it! The Docker instance will help you get up and running quickly while also standardizing the development environment across your teams.
-
-## Questions
-
-If you have any issues or questions, reach out to us on [Discord](https://discord.com/invite/payload) or start a [GitHub discussion](https://github.com/payloadcms/payload/discussions).
+## Yedekleme
+Tüm veritabanı ve yüklenen fotoğraflar yalnızca `data/` ve `media/` klasörlerindedir:
+```bash
+tar -czf aritman-yedek-$(date +%F).tar.gz data/ media/
+```
