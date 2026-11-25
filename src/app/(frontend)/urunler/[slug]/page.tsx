@@ -28,7 +28,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params
   const product = await getProductBySlug(slug)
-  if (!product) return { title: 'Ürün Bulunamadı' }
+  if (!product) return { title: 'Ürün bulunamadı' }
   return {
     title: product.title,
     description: product.summary,
@@ -63,19 +63,19 @@ export default async function ProductDetailPage({
 
   return (
     <>
-      <section className="bg-white py-12 sm:py-16">
-        <div className="mx-auto max-w-[1200px] px-5 sm:px-6">
+      <section className="bg-[var(--background)] py-12 sm:py-16">
+        <div className="mx-auto max-w-[1200px] px-6">
           <Link
             href="/urunler"
-            className="mb-8 inline-flex items-center gap-1.5 text-sm text-zinc-500 transition-colors hover:text-zinc-950"
+            className="mb-8 inline-flex items-center gap-2 text-sm text-[var(--text-secondary)] transition-colors duration-150 hover:text-[var(--foreground)]"
           >
-            <HugeiconsIcon icon={ArrowLeft01Icon} size={15} strokeWidth={1.8} />
-            <span>Tüm Cihazlar</span>
+            <HugeiconsIcon icon={ArrowLeft01Icon} size={16} strokeWidth={1.5} />
+            <span>Tüm cihazlar</span>
           </Link>
 
           <div className="grid grid-cols-1 gap-12 lg:grid-cols-12">
             <div className="lg:col-span-6">
-              <div className="overflow-hidden rounded-3xl bg-zinc-100">
+              <div className="overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--card)]">
                 <img
                   src={imgUrl}
                   alt={product.title}
@@ -85,49 +85,51 @@ export default async function ProductDetailPage({
             </div>
 
             <div className="lg:col-span-6">
-              <span className="font-mono text-xs uppercase tracking-wider text-zinc-400">
+              <span className="font-mono text-xs text-[var(--muted-foreground)]">
                 {CATEGORY_LABELS[product.category]}
               </span>
-              <h1 className="mt-2 text-3xl font-semibold tracking-[-0.03em] text-zinc-950 sm:text-4xl">
+              <h1 className="mt-2 text-[28px] font-medium leading-[1.15] tracking-[-0.02em] text-[var(--foreground)] sm:text-[36px]">
                 {product.title}
               </h1>
-              <p className="mt-4 text-[15.5px] leading-relaxed text-zinc-500">
+              <p className="mt-4 text-base leading-7 text-[var(--text-secondary)]">
                 {product.description || product.summary}
               </p>
 
-              <div className="mt-8 grid grid-cols-3 gap-4 border-y border-zinc-200 py-5">
+              <div className="mt-8 grid grid-cols-3 gap-4 border-y border-[var(--border)] py-5">
                 <div>
-                  <div className="text-xs text-zinc-400">Kapasite</div>
-                  <div className="mt-1 font-mono text-sm font-medium text-zinc-950">
-                    {product.capacity || 'İhtiyaca Özel'}
+                  <div className="text-xs text-[var(--muted-foreground)]">Kapasite</div>
+                  <div className="mt-1 font-mono text-sm font-medium tabular-nums text-[var(--foreground)]">
+                    {product.capacity || 'İhtiyaca özel'}
                   </div>
                 </div>
                 <div>
-                  <div className="text-xs text-zinc-400">Filtrasyon</div>
-                  <div className="mt-1 text-sm font-medium text-zinc-950">
-                    {product.stages || 'Çok Aşamalı RO'}
+                  <div className="text-xs text-[var(--muted-foreground)]">Filtrasyon</div>
+                  <div className="mt-1 text-sm font-medium text-[var(--foreground)]">
+                    {product.stages || 'Çok aşamalı RO'}
                   </div>
                 </div>
                 <div>
-                  <div className="text-xs text-zinc-400">Garanti</div>
-                  <div className="mt-1 text-sm font-medium text-zinc-950">
-                    {product.warranty || '2 Yıl'}
+                  <div className="text-xs text-[var(--muted-foreground)]">Garanti</div>
+                  <div className="mt-1 text-sm font-medium text-[var(--foreground)]">
+                    {product.warranty || '2 yıl'}
                   </div>
                 </div>
               </div>
 
               {product.features && product.features.length > 0 && (
-                <div className="mt-7">
-                  <h2 className="text-sm font-medium text-zinc-950">Teknik Özellikler</h2>
-                  <ul className="mt-3 space-y-2.5">
+                <div className="mt-8">
+                  <h2 className="text-sm font-medium text-[var(--foreground)]">
+                    Teknik özellikler
+                  </h2>
+                  <ul className="mt-3 space-y-3">
                     {product.features.map((feat, idx) => (
-                      <li key={feat.id || idx} className="flex items-start gap-2.5 text-sm text-zinc-600">
-                        <HugeiconsIcon
-                          icon={Tick02Icon}
-                          size={15}
-                          strokeWidth={2}
-                          className="mt-0.5 shrink-0 text-zinc-950"
-                        />
+                      <li
+                        key={feat.id || idx}
+                        className="flex items-start gap-3 text-sm leading-6 text-[var(--text-secondary)]"
+                      >
+                        <span className="mt-1 flex w-4 shrink-0 justify-center text-[var(--primary)]">
+                          <HugeiconsIcon icon={Tick02Icon} size={16} strokeWidth={1.5} />
+                        </span>
                         <span>{feat.text}</span>
                       </li>
                     ))}
@@ -135,21 +137,21 @@ export default async function ProductDetailPage({
                 </div>
               )}
 
-              <p className="mt-6 text-xs text-zinc-400">
+              <p className="mt-6 text-xs text-[var(--muted-foreground)]">
                 {product.priceNote || 'Ücretsiz yerinde keşif ve montaj dahil'}
               </p>
 
-              <div className="mt-4 flex flex-wrap gap-2.5">
-                <Button variant="primary" size="lg" asChild>
+              <div className="mt-4 flex flex-wrap gap-3">
+                <Button variant="ocean" size="lg" asChild>
                   <a href={waHref} target="_blank" rel="noopener noreferrer">
-                    <span>WhatsApp&apos;tan Fiyat Al</span>
-                    <HugeiconsIcon icon={ArrowUpRight01Icon} size={15} strokeWidth={1.8} />
+                    <span>WhatsApp&apos;tan fiyat al</span>
+                    <HugeiconsIcon icon={ArrowUpRight01Icon} size={16} strokeWidth={1.5} />
                   </a>
                 </Button>
                 <Button variant="outline" size="lg" asChild>
                   <a href={telHref}>
-                    <HugeiconsIcon icon={Call02Icon} size={15} strokeWidth={1.8} />
-                    <span className="font-mono">{settings.phoneDisplay}</span>
+                    <HugeiconsIcon icon={Call02Icon} size={16} strokeWidth={1.5} />
+                    <span className="font-mono tabular-nums">{settings.phoneDisplay}</span>
                   </a>
                 </Button>
               </div>
@@ -158,8 +160,8 @@ export default async function ProductDetailPage({
         </div>
       </section>
 
-      <section className="border-t border-zinc-200/80 bg-zinc-50/70 py-16">
-        <div className="mx-auto max-w-2xl px-5 sm:px-6">
+      <section className="border-t border-[var(--border)] bg-[var(--card)] py-16 sm:py-20">
+        <div className="mx-auto max-w-2xl px-6">
           <QuoteForm whatsappNumber={settings.whatsappNumber} defaultService={product.title} />
         </div>
       </section>

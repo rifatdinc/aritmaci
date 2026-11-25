@@ -4,20 +4,20 @@ import { buildWhatsappUrl, getSiteSettings } from '@/lib/cms'
 import { WhatsappIcon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 import type { Metadata } from 'next'
-import { Geist, Geist_Mono } from 'next/font/google'
+import { Geist_Mono, Instrument_Sans } from 'next/font/google'
 import React from 'react'
 import './styles.css'
 
-const geistSans = Geist({
+const instrumentSans = Instrument_Sans({
   subsets: ['latin', 'latin-ext'],
-  weight: ['400', '500', '600', '700'],
-  variable: '--font-geist-sans',
+  weight: ['400', '500', '600'],
+  variable: '--font-instrument-sans',
   display: 'swap',
 })
 
 const geistMono = Geist_Mono({
   subsets: ['latin', 'latin-ext'],
-  weight: ['400', '500', '600'],
+  weight: ['400', '500'],
   variable: '--font-geist-mono',
   display: 'swap',
 })
@@ -41,8 +41,8 @@ export default async function FrontendLayout({ children }: { children: React.Rea
   )
 
   return (
-    <html lang="tr" className={`${geistSans.variable} ${geistMono.variable}`}>
-      <body className="min-h-screen bg-white text-zinc-950 antialiased selection:bg-sky-600 selection:text-white">
+    <html lang="tr" className={`${instrumentSans.variable} ${geistMono.variable}`}>
+      <body className="min-h-screen bg-[var(--background)] text-[var(--foreground)] antialiased selection:bg-[var(--primary)] selection:text-[var(--primary-foreground)]">
         <SiteHeader settings={settings} />
         <main id="main-content">{children}</main>
         <SiteFooter settings={settings} />
@@ -52,9 +52,9 @@ export default async function FrontendLayout({ children }: { children: React.Rea
           target="_blank"
           rel="noopener noreferrer"
           aria-label="WhatsApp ile iletişime geçin"
-          className="fixed bottom-5 right-5 z-50 inline-flex h-11 items-center gap-2 rounded-full bg-emerald-600 px-4 text-xs font-semibold text-white shadow-[0_10px_28px_rgba(5,150,105,0.32)] transition-all hover:-translate-y-0.5 hover:bg-emerald-700"
+          className="fixed bottom-6 right-6 z-50 inline-flex h-10 items-center gap-2 rounded-lg border border-[var(--dark-border)] bg-[var(--surface-dark)] px-4 text-sm font-medium text-[var(--dark-foreground)] shadow-[0_8px_24px_rgba(28,27,24,0.14)] transition-[background-color,transform] duration-150 ease-[cubic-bezier(0.22,1,0.36,1)] hover:bg-[#2c2a25] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]"
         >
-          <HugeiconsIcon icon={WhatsappIcon} size={18} strokeWidth={2} />
+          <HugeiconsIcon icon={WhatsappIcon} size={16} strokeWidth={1.5} />
           <span className="hidden sm:inline">WhatsApp</span>
         </a>
       </body>

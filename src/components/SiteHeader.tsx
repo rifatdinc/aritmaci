@@ -16,10 +16,10 @@ import React, { useState } from 'react'
 
 const NAV_ITEMS = [
   { href: '/urunler', label: 'Cihazlar' },
-  { href: '/#cihaz-secimi', label: 'Cihaz Seçimi' },
+  { href: '/#cihaz-secimi', label: 'Cihaz seçimi' },
   { href: '/referanslar', label: 'Referanslar' },
-  { href: '/#filtre-bakim', label: 'Filtre Kontrolü' },
-  { href: '/#sss', label: 'SSS' },
+  { href: '/#filtre-bakim', label: 'Filtre takibi' },
+  { href: '/#sss', label: 'Sorular' },
 ]
 
 export function SiteHeader({ settings }: { settings: SiteSettingsDoc }) {
@@ -38,39 +38,39 @@ export function SiteHeader({ settings }: { settings: SiteSettingsDoc }) {
   )
 
   return (
-    <header className="sticky top-0 z-50 border-b border-slate-200/75 bg-white/88 backdrop-blur-xl">
-      <div className="mx-auto flex h-16 max-w-[1200px] items-center justify-between gap-6 px-5 sm:px-6">
+    <header className="sticky top-0 z-50 border-b border-[var(--border)] bg-[var(--background)]/92 backdrop-blur-md">
+      <div className="mx-auto flex h-16 max-w-[1200px] items-center justify-between gap-6 px-6">
         <Link
           href="/"
-          className="group flex shrink-0 items-center gap-2.5"
+          className="flex shrink-0 items-center gap-2.5 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]"
           aria-label={settings.companyName}
         >
           {customLogo ? (
             <img src={customLogo} alt={settings.companyName} className="h-8 w-auto object-contain" />
           ) : (
             <>
-              <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-sky-500 to-sky-700 text-white shadow-[0_2px_10px_rgba(2,132,199,0.3)] transition-transform duration-200 group-hover:scale-105">
-                <HugeiconsIcon icon={DropletIcon} size={16} strokeWidth={2.2} />
+              <span className="flex h-7 w-7 items-center justify-center rounded-md bg-[var(--primary)] text-[var(--primary-foreground)]">
+                <HugeiconsIcon icon={DropletIcon} size={16} strokeWidth={1.5} />
               </span>
-              <span className="text-[16.5px] font-semibold tracking-tight text-zinc-950">
-                Aritman<span className="text-sky-600">.</span>
+              <span className="text-base font-semibold leading-none text-[var(--foreground)]">
+                Aritman
               </span>
             </>
           )}
         </Link>
 
         <nav aria-label="Ana menü" className="hidden lg:block">
-          <ul className="flex items-center gap-7">
+          <ul className="flex items-center gap-6">
             {NAV_ITEMS.map((item) => {
               const isActive = !item.href.startsWith('/#') && pathname.startsWith(item.href)
               return (
                 <li key={item.href}>
                   <Link
                     href={item.href}
-                    className={`text-[14px] transition-colors ${
+                    className={`rounded-md px-1 py-1 text-sm transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] ${
                       isActive
-                        ? 'font-semibold text-sky-600'
-                        : 'text-slate-600 hover:text-zinc-950'
+                        ? 'font-medium text-[var(--foreground)]'
+                        : 'text-[var(--text-secondary)] hover:text-[var(--foreground)]'
                     }`}
                   >
                     {item.label}
@@ -81,38 +81,40 @@ export function SiteHeader({ settings }: { settings: SiteSettingsDoc }) {
           </ul>
         </nav>
 
-        <div className="hidden items-center gap-2 lg:flex">
-          <Button variant="outline" size="sm" asChild>
-            <Link href="/iletisim">İletişim</Link>
-          </Button>
+        <div className="hidden items-center gap-5 lg:flex">
+          <Link
+            href="/iletisim"
+            className="text-sm text-[var(--text-secondary)] transition-colors duration-150 hover:text-[var(--foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] rounded-md"
+          >
+            İletişim
+          </Link>
           <Button variant="ocean" size="sm" asChild>
             <a href={waHref} target="_blank" rel="noopener noreferrer">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-300" />
-              <span>Ücretsiz Keşif</span>
+              Ücretsiz keşif
             </a>
           </Button>
         </div>
 
         <button
           type="button"
-          className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 bg-white text-zinc-950 lg:hidden cursor-pointer"
+          className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-[var(--border-strong)] bg-[var(--card)] text-[var(--foreground)] transition-colors duration-150 hover:bg-[var(--surface-raised)] lg:hidden cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]"
           aria-label={menuOpen ? 'Menüyü kapat' : 'Menüyü aç'}
           aria-expanded={menuOpen}
           onClick={() => setMenuOpen((prev) => !prev)}
         >
-          <HugeiconsIcon icon={menuOpen ? Cancel01Icon : Menu01Icon} size={18} strokeWidth={1.8} />
+          <HugeiconsIcon icon={menuOpen ? Cancel01Icon : Menu01Icon} size={16} strokeWidth={1.5} />
         </button>
       </div>
 
       {menuOpen && (
-        <div className="border-t border-slate-200 bg-white px-5 pb-5 pt-2 lg:hidden">
-          <div className="flex flex-col divide-y divide-slate-100">
+        <div className="border-t border-[var(--border)] bg-[var(--card)] px-6 pb-6 pt-2 lg:hidden">
+          <div className="flex flex-col divide-y divide-[var(--border)]">
             {NAV_ITEMS.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
                 onClick={() => setMenuOpen(false)}
-                className="py-3 text-sm font-medium text-zinc-950"
+                className="py-3 text-sm font-medium text-[var(--foreground)]"
               >
                 {item.label}
               </Link>
@@ -120,21 +122,21 @@ export function SiteHeader({ settings }: { settings: SiteSettingsDoc }) {
             <Link
               href="/iletisim"
               onClick={() => setMenuOpen(false)}
-              className="py-3 text-sm font-medium text-zinc-950"
+              className="py-3 text-sm font-medium text-[var(--foreground)]"
             >
               İletişim
             </Link>
           </div>
-          <div className="mt-4 grid grid-cols-2 gap-2">
+          <div className="mt-4 grid grid-cols-2 gap-3">
             <Button variant="outline" size="sm" asChild>
               <a href={telHref}>
-                <HugeiconsIcon icon={Call02Icon} size={15} strokeWidth={1.8} />
+                <HugeiconsIcon icon={Call02Icon} size={16} strokeWidth={1.5} />
                 <span>Ara</span>
               </a>
             </Button>
-            <Button variant="whatsapp" size="sm" asChild>
+            <Button variant="ocean" size="sm" asChild>
               <a href={waHref} target="_blank" rel="noopener noreferrer">
-                <HugeiconsIcon icon={WhatsappIcon} size={15} strokeWidth={1.8} />
+                <HugeiconsIcon icon={WhatsappIcon} size={16} strokeWidth={1.5} />
                 <span>WhatsApp</span>
               </a>
             </Button>

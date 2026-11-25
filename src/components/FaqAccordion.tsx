@@ -15,7 +15,7 @@ export function FaqAccordion({ faqs }: { faqs: FaqDoc[] }) {
       type="single"
       collapsible
       defaultValue={faqs[0] ? String(faqs[0].id) : undefined}
-      className="border-t border-zinc-200"
+      className="border-t border-[var(--border)]"
     >
       {faqs.map((faq) => (
         <AccordionItem key={faq.id} value={String(faq.id)}>

@@ -7,14 +7,16 @@ import { HugeiconsIcon } from '@hugeicons/react'
 import { motion } from 'motion/react'
 import React, { useMemo, useState } from 'react'
 
+const EASE = [0.22, 1, 0.36, 1] as const
+
 type SectorFilter = 'all' | ReferenceDoc['sector']
 
 const SECTOR_TABS: { key: SectorFilter; label: string }[] = [
   { key: 'all', label: 'Tümü' },
-  { key: 'kamu-medya', label: 'Kamu & Medya' },
+  { key: 'kamu-medya', label: 'Kamu ve medya' },
   { key: 'belediye', label: 'Belediye' },
-  { key: 'kafe-restoran', label: 'Kafe & Restoran' },
-  { key: 'evsel-montaj', label: 'Evsel Montaj' },
+  { key: 'kafe-restoran', label: 'Kafe ve restoran' },
+  { key: 'evsel-montaj', label: 'Evsel montaj' },
 ]
 
 export function ReferenceGrid({
@@ -41,7 +43,7 @@ export function ReferenceGrid({
     <div>
       {showFilters && (
         <div
-          className="mb-10 inline-flex flex-wrap items-center gap-1 rounded-full border border-slate-200/80 bg-slate-100/80 p-1"
+          className="mb-8 inline-flex flex-wrap items-center gap-1 rounded-xl border border-[var(--border)] bg-[var(--surface-raised)] p-1"
           role="tablist"
           aria-label="Referans sektörleri"
         >
@@ -58,21 +60,25 @@ export function ReferenceGrid({
                 role="tab"
                 aria-selected={isActive}
                 onClick={() => setSector(tab.key)}
-                className={`relative inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-[13.5px] font-medium transition-colors cursor-pointer ${
-                  isActive ? 'text-white' : 'text-slate-600 hover:text-zinc-950'
+                className={`relative inline-flex h-8 items-center gap-2 rounded-lg px-3 text-sm font-medium transition-colors duration-150 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] ${
+                  isActive
+                    ? 'text-[var(--primary-foreground)]'
+                    : 'text-[var(--text-secondary)] hover:text-[var(--foreground)]'
                 }`}
               >
                 {isActive && (
                   <motion.span
                     layoutId="reference-sector-pill"
-                    transition={{ type: 'spring', stiffness: 400, damping: 32 }}
-                    className="absolute inset-0 rounded-full bg-sky-600 shadow-xs"
+                    transition={{ duration: 0.22, ease: EASE }}
+                    className="absolute inset-0 rounded-lg bg-[var(--primary)]"
                   />
                 )}
                 <span className="relative z-10">{tab.label}</span>
                 <span
-                  className={`relative z-10 font-mono text-[11px] ${
-                    isActive ? 'text-sky-100' : 'text-slate-400'
+                  className={`relative z-10 font-mono text-xs tabular-nums ${
+                    isActive
+                      ? 'text-[var(--primary-foreground)]/80'
+                      : 'text-[var(--muted-foreground)]'
                   }`}
                 >
                   {count}
@@ -84,24 +90,24 @@ export function ReferenceGrid({
       )}
 
       {photoRefs.length > 0 && (
-        <div className="mb-10 grid grid-cols-1 gap-7 sm:grid-cols-2">
+        <div className="mb-8 grid grid-cols-1 gap-6 sm:grid-cols-2">
           {photoRefs.map((ref) => (
-            <SpotlightCard key={ref.id} className="p-3.5">
-              <div className="aspect-[16/10] overflow-hidden rounded-2xl bg-slate-100">
+            <SpotlightCard key={ref.id} className="p-2">
+              <div className="aspect-[16/10] overflow-hidden rounded-lg bg-[var(--surface-raised)]">
                 <img
                   src={getMediaUrl(ref.image)}
                   alt={ref.name}
                   loading="lazy"
-                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                  className="h-full w-full object-cover"
                 />
               </div>
-              <div className="px-1.5 pb-1 pt-4 flex items-start justify-between gap-4">
+              <div className="flex items-start justify-between gap-4 p-4">
                 <div>
-                  <h3 className="text-[15.5px] font-semibold text-zinc-950">{ref.name}</h3>
-                  <p className="mt-0.5 text-sm text-slate-500">{ref.service}</p>
+                  <h3 className="text-base font-medium text-[var(--foreground)]">{ref.name}</h3>
+                  <p className="mt-1 text-sm text-[var(--text-secondary)]">{ref.service}</p>
                 </div>
-                <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-sky-50 px-2.5 py-0.5 font-mono text-[11.5px] text-sky-700">
-                  <HugeiconsIcon icon={Location01Icon} size={12} strokeWidth={2} />
+                <span className="inline-flex shrink-0 items-center gap-1.5 font-mono text-xs text-[var(--muted-foreground)]">
+                  <HugeiconsIcon icon={Location01Icon} size={16} strokeWidth={1.5} />
                   <span>{ref.city}</span>
                 </span>
               </div>
@@ -111,32 +117,41 @@ export function ReferenceGrid({
       )}
 
       {textRefs.length > 0 && (
-        <div className="divide-y divide-slate-200/80 overflow-hidden rounded-2xl border border-slate-200/80 bg-white">
-          {textRefs.map((ref) => (
-            <div
-              key={ref.id}
-              className="grid grid-cols-1 gap-1.5 px-5 py-4 transition-colors hover:bg-sky-50/45 sm:grid-cols-12 sm:items-center sm:gap-4"
-            >
-              <div className="flex items-center gap-2.5 text-[15px] font-medium text-zinc-950 sm:col-span-5">
-                <HugeiconsIcon
-                  icon={ref.sector === 'evsel-montaj' ? Home09Icon : Building03Icon}
-                  size={16}
-                  strokeWidth={1.8}
-                  className="shrink-0 text-sky-600"
-                />
-                <span>{ref.name}</span>
-              </div>
-              <div className="text-sm text-slate-500 sm:col-span-4">{ref.service}</div>
-              <div className="sm:col-span-2">
-                <span className="inline-flex rounded-full bg-slate-100 px-2.5 py-0.5 text-[11.5px] font-medium text-slate-600">
+        <div className="overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--card)]">
+          <div className="hidden grid-cols-12 items-center gap-4 border-b border-[var(--border)] bg-[var(--background)] px-6 py-3 font-mono text-xs text-[var(--muted-foreground)] sm:grid">
+            <div className="col-span-5">Kurum veya işletme</div>
+            <div className="col-span-4">Uygulama</div>
+            <div className="col-span-2">Sektör</div>
+            <div className="col-span-1 text-right">Şehir</div>
+          </div>
+          <div className="divide-y divide-[var(--border)]">
+            {textRefs.map((ref) => (
+              <div
+                key={ref.id}
+                className="grid grid-cols-1 gap-2 px-6 py-4 transition-colors duration-150 hover:bg-[var(--background)]/70 sm:grid-cols-12 sm:items-center sm:gap-4"
+              >
+                <div className="flex items-center gap-3 text-sm font-medium text-[var(--foreground)] sm:col-span-5">
+                  <span className="flex w-4 shrink-0 justify-center text-[var(--muted-foreground)]">
+                    <HugeiconsIcon
+                      icon={ref.sector === 'evsel-montaj' ? Home09Icon : Building03Icon}
+                      size={16}
+                      strokeWidth={1.5}
+                    />
+                  </span>
+                  <span>{ref.name}</span>
+                </div>
+                <div className="text-sm text-[var(--text-secondary)] sm:col-span-4">
+                  {ref.service}
+                </div>
+                <div className="text-xs text-[var(--muted-foreground)] sm:col-span-2">
                   {SECTOR_LABELS[ref.sector]}
-                </span>
+                </div>
+                <div className="font-mono text-xs text-[var(--muted-foreground)] sm:col-span-1 sm:text-right">
+                  {ref.city.split('/')[0].trim()}
+                </div>
               </div>
-              <div className="font-mono text-xs text-slate-500 sm:col-span-1 sm:text-right">
-                {ref.city.split('/')[0].trim()}
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       )}
     </div>

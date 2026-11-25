@@ -14,7 +14,7 @@ export function AccordionItem({
 }: React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Item>) {
   return (
     <AccordionPrimitive.Item
-      className={cn('border-b border-zinc-200', className)}
+      className={cn('border-b border-[var(--border)]', className)}
       {...props}
     />
   )
@@ -29,7 +29,7 @@ export function AccordionTrigger({
     <AccordionPrimitive.Header className="flex">
       <AccordionPrimitive.Trigger
         className={cn(
-          'group flex flex-1 items-center justify-between gap-6 py-5 text-left text-[15.5px] font-medium text-zinc-950 transition-colors hover:text-zinc-600 cursor-pointer',
+          'group flex flex-1 items-center justify-between gap-6 py-5 text-left text-base font-medium text-[var(--foreground)] transition-colors duration-150 hover:text-[var(--primary)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] rounded-md',
           className,
         )}
         {...props}
@@ -37,9 +37,9 @@ export function AccordionTrigger({
         <span>{children}</span>
         <HugeiconsIcon
           icon={ArrowDown01Icon}
-          size={17}
-          strokeWidth={1.75}
-          className="shrink-0 text-zinc-400 transition-transform duration-200 group-data-[state=open]:rotate-180 group-data-[state=open]:text-zinc-950"
+          size={16}
+          strokeWidth={1.5}
+          className="shrink-0 text-[var(--muted-foreground)] transition-transform duration-150 ease-[cubic-bezier(0.22,1,0.36,1)] group-data-[state=open]:rotate-180 group-data-[state=open]:text-[var(--foreground)]"
         />
       </AccordionPrimitive.Trigger>
     </AccordionPrimitive.Header>
@@ -53,7 +53,7 @@ export function AccordionContent({
 }: React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Content>) {
   return (
     <AccordionPrimitive.Content
-      className="overflow-hidden text-[14.5px] leading-relaxed text-zinc-500 data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down"
+      className="overflow-hidden text-sm leading-6 text-[var(--text-secondary)] data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down"
       {...props}
     >
       <div className={cn('pb-6 pr-8', className)}>{children}</div>

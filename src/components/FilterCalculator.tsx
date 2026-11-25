@@ -2,16 +2,12 @@
 
 import { Button } from '@/components/ui/button'
 import { buildWhatsappUrl } from '@/lib/types'
-import {
-  ArrowUpRight01Icon,
-  Calendar03Icon,
-  CheckmarkCircle02Icon,
-  Clock01Icon,
-  WhatsappIcon,
-} from '@hugeicons/core-free-icons'
+import { ArrowUpRight01Icon, WhatsappIcon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 import { motion } from 'motion/react'
 import React, { useMemo, useState } from 'react'
+
+const EASE = [0.22, 1, 0.36, 1] as const
 
 export function FilterCalculator({ whatsappNumber }: { whatsappNumber: string }) {
   const [lastDate, setLastDate] = useState(() => {
@@ -48,29 +44,29 @@ export function FilterCalculator({ whatsappNumber }: { whatsappNumber: string })
       return {
         formatted,
         lifePercent: 4,
-        barCls: 'bg-rose-500',
-        pillCls: 'border-rose-200 bg-rose-50 text-rose-700',
+        barColor: 'bg-[var(--negative)]',
+        dotColor: 'bg-[var(--negative)]',
+        textColor: 'text-[var(--negative)]',
         label: `Bakım ${Math.abs(diffDays)} gün gecikmiş`,
-        isOk: false,
       }
     }
     if (diffDays <= 30) {
       return {
         formatted,
         lifePercent: Math.max(12, lifePercent),
-        barCls: 'bg-amber-500',
-        pillCls: 'border-amber-200 bg-amber-50 text-amber-800',
+        barColor: 'bg-[var(--warning)]',
+        dotColor: 'bg-[var(--warning)]',
+        textColor: 'text-[var(--warning)]',
         label: `Bakım yaklaşıyor (${diffDays} gün kaldı)`,
-        isOk: false,
       }
     }
     return {
       formatted,
       lifePercent,
-      barCls: 'bg-sky-500',
-      pillCls: 'border-emerald-200 bg-emerald-50 text-emerald-700',
+      barColor: 'bg-[var(--primary)]',
+      dotColor: 'bg-[var(--positive)]',
+      textColor: 'text-[var(--positive)]',
       label: `Filtreniz güncel (${diffDays} gün kaldı)`,
-      isOk: true,
     }
   }, [lastDate, months])
 
@@ -82,25 +78,24 @@ export function FilterCalculator({ whatsappNumber }: { whatsappNumber: string })
   )
 
   return (
-    <div className="grid grid-cols-1 overflow-hidden rounded-3xl border border-slate-200/90 bg-white shadow-[0_14px_40px_rgba(15,23,42,0.05)] lg:grid-cols-12">
-      <div className="p-6 sm:p-10 lg:col-span-7">
-        <span className="inline-flex items-center gap-1.5 font-mono text-xs font-medium text-sky-600">
-          <HugeiconsIcon icon={Calendar03Icon} size={14} strokeWidth={2} />
-          <span>PERİYODİK BAKIM TAKİBİ</span>
+    <div className="grid grid-cols-1 overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--card)] lg:grid-cols-12">
+      <div className="p-6 sm:p-8 lg:col-span-7">
+        <span className="font-mono text-xs text-[var(--muted-foreground)]">
+          Periyodik bakım takibi
         </span>
-        <h2 className="mt-2 text-2xl font-semibold tracking-tight text-zinc-950 sm:text-3xl">
+        <h2 className="mt-2 text-[28px] font-medium leading-[1.15] tracking-[-0.02em] text-[var(--foreground)] sm:text-[32px]">
           Filtre değişim tarihini hesaplayın
         </h2>
-        <p className="mt-2 max-w-lg text-sm leading-relaxed text-slate-500">
-          Son filtre değişim tarihinizi ve kullanım periyodunuzu girin, kalan filtre ömrünü ve bir
-          sonraki bakım zamanını anında görün.
+        <p className="mt-3 max-w-lg text-sm leading-6 text-[var(--text-secondary)]">
+          Son filtre değişim tarihinizi ve kullanım periyodunuzu girin, kalan filtre ömrünü ve
+          sonraki bakım zamanını görün.
         </p>
 
-        <div className="mt-7 grid grid-cols-1 gap-5 sm:grid-cols-2">
+        <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2">
           <div>
             <label
               htmlFor="calc-last-date"
-              className="mb-2 block text-xs font-medium text-slate-500"
+              className="mb-2 block text-xs font-medium text-[var(--text-secondary)]"
             >
               Son değişim tarihi
             </label>
@@ -109,25 +104,28 @@ export function FilterCalculator({ whatsappNumber }: { whatsappNumber: string })
               type="date"
               value={lastDate}
               onChange={(e) => setLastDate(e.target.value)}
-              className="h-11 w-full rounded-xl border border-slate-200 bg-slate-50/60 px-3.5 font-mono text-sm text-zinc-950 focus:border-sky-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-sky-500/15"
+              className="h-10 w-full rounded-lg border border-[var(--input)] bg-[var(--background)] px-3 font-mono text-sm tabular-nums text-[var(--foreground)] transition-colors duration-150 focus:border-[var(--primary)] focus:bg-[var(--card)] focus:outline-none focus:ring-2 focus:ring-[var(--ring)]/20"
             />
           </div>
 
           <div>
-            <span className="mb-2 block text-xs font-medium text-slate-500">Bakım aralığı</span>
+            <span className="mb-2 block text-xs font-medium text-[var(--text-secondary)]">
+              Bakım aralığı
+            </span>
             <div className="grid grid-cols-3 gap-2">
               {[6, 9, 12].map((m) => (
                 <button
                   key={m}
                   type="button"
+                  aria-pressed={months === m}
                   onClick={() => setMonths(m)}
-                  className={`h-11 rounded-xl border text-sm font-medium transition-all cursor-pointer ${
+                  className={`h-10 rounded-lg border font-mono text-sm tabular-nums transition-[background-color,border-color,color] duration-150 ease-[cubic-bezier(0.22,1,0.36,1)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] ${
                     months === m
-                      ? 'border-sky-600 bg-sky-600 text-white shadow-xs'
-                      : 'border-slate-200 bg-white text-slate-600 hover:border-sky-300 hover:text-zinc-950'
+                      ? 'border-[var(--primary)] bg-[var(--primary)] font-medium text-[var(--primary-foreground)]'
+                      : 'border-[var(--border-strong)] bg-[var(--card)] text-[var(--text-secondary)] hover:text-[var(--foreground)]'
                   }`}
                 >
-                  {m} Ay
+                  {m} ay
                 </button>
               ))}
             </div>
@@ -135,36 +133,34 @@ export function FilterCalculator({ whatsappNumber }: { whatsappNumber: string })
         </div>
       </div>
 
-      <div className="flex flex-col justify-between gap-6 border-t border-slate-200/80 bg-gradient-to-br from-sky-50/70 via-white to-slate-50 p-6 sm:p-10 lg:col-span-5 lg:border-l lg:border-t-0">
+      <div className="flex flex-col justify-between gap-8 border-t border-[var(--border)] bg-[var(--surface-raised)] p-6 sm:p-8 lg:col-span-5 lg:border-l lg:border-t-0">
         {calc && (
           <div>
-            <div
-              className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-medium ${calc.pillCls}`}
-            >
-              <HugeiconsIcon
-                icon={calc.isOk ? CheckmarkCircle02Icon : Clock01Icon}
-                size={14}
-                strokeWidth={2}
-              />
-              <span>{calc.label}</span>
+            <div className={`inline-flex items-center gap-2 text-xs font-medium ${calc.textColor}`}>
+              <span className={`h-2 w-2 rounded-full ${calc.dotColor}`} aria-hidden="true" />
+              <span className="tabular-nums">{calc.label}</span>
             </div>
 
-            <div className="mt-5 text-xs text-slate-500">Önerilen sonraki bakım</div>
-            <div className="mt-1 font-mono text-2xl font-semibold tracking-tight text-zinc-950">
+            <div className="mt-6 text-xs text-[var(--muted-foreground)]">
+              Önerilen sonraki bakım
+            </div>
+            <div className="mt-1 font-mono text-2xl font-medium tabular-nums text-[var(--foreground)]">
               {calc.formatted}
             </div>
 
-            <div className="mt-4">
-              <div className="mb-1.5 flex items-center justify-between text-[11px] font-medium text-slate-500">
+            <div className="mt-6">
+              <div className="mb-2 flex items-center justify-between text-xs text-[var(--text-secondary)]">
                 <span>Tahmini kalan filtre ömrü</span>
-                <span className="font-mono text-zinc-950">%{calc.lifePercent}</span>
+                <span className="font-mono font-medium tabular-nums text-[var(--foreground)]">
+                  %{calc.lifePercent}
+                </span>
               </div>
-              <div className="h-2 w-full overflow-hidden rounded-full bg-slate-200/80">
+              <div className="h-2 w-full overflow-hidden rounded-sm bg-[var(--card)]">
                 <motion.div
                   initial={false}
-                  animate={{ width: `${calc.lifePercent}%` }}
-                  transition={{ type: 'spring', stiffness: 120, damping: 20 }}
-                  className={`h-full rounded-full ${calc.barCls}`}
+                  animate={{ scaleX: calc.lifePercent / 100 }}
+                  transition={{ duration: 0.35, ease: EASE }}
+                  className={`h-full w-full origin-left ${calc.barColor}`}
                 />
               </div>
             </div>
@@ -172,11 +168,11 @@ export function FilterCalculator({ whatsappNumber }: { whatsappNumber: string })
         )}
 
         <div>
-          <Button variant="whatsapp" size="md" asChild className="w-full">
+          <Button variant="ocean" size="md" asChild className="w-full">
             <a href={waHref} target="_blank" rel="noopener noreferrer">
-              <HugeiconsIcon icon={WhatsappIcon} size={17} strokeWidth={2} />
-              <span>WhatsApp&apos;tan Bakım Randevusu Al</span>
-              <HugeiconsIcon icon={ArrowUpRight01Icon} size={15} strokeWidth={2} />
+              <HugeiconsIcon icon={WhatsappIcon} size={16} strokeWidth={1.5} />
+              <span>WhatsApp&apos;tan bakım randevusu al</span>
+              <HugeiconsIcon icon={ArrowUpRight01Icon} size={16} strokeWidth={1.5} />
             </a>
           </Button>
         </div>

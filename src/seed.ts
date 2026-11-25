@@ -96,20 +96,20 @@ async function seed() {
       workingHours: 'Hafta içi 09:00 – 18:00 • 7/24 Teknik Destek',
       mapsQuery:
         'Dumlupınar Mahallesi Ondokuz Mayıs Caddesi 46. Sokak No 8 Kat 4 Gölcük Kocaeli',
-      heroEyebrow: 'GÖLCÜK / KOCAELİ & İSTANBUL • 20 YILLIK SAHA DENEYİMİ',
-      heroTitle: 'Eviniz ve işletmeniz için ölçülerek kurulan su arıtma sistemleri.',
+      heroEyebrow: 'Gölcük, Kocaeli ve İstanbul · 20 yıllık saha deneyimi',
+      heroTitle: 'Eviniz ve işletmeniz için ölçülerek kurulan su arıtma sistemleri',
       heroSubtitle:
         'Kurulum öncesi yerinde su sertliği ve TDS ölçümü yapıyor, NSF ve TSE onaylı filtrelerle evinize veya işletmenize en doğru sistemi kuruyoruz. 2 yıl tam garanti ve düzenli bakım takibi ile yanınızdayız.',
       heroImage: heroImgId,
       stats: [
-        { value: '5.000+', label: 'Tamamlanan Ev & Kurum Kurulumu' },
-        { value: '20 Yıl', label: 'Kesintisiz Saha ve Servis Deneyimi' },
-        { value: '%99,9', label: 'Ters Osmoz Arıtma Verimi' },
-        { value: '2 Yıl', label: 'Tam Kapsamlı Garanti & 7/24 Destek' },
+        { value: '5.000+', label: 'Tamamlanan ev ve kurum kurulumu' },
+        { value: '20 yıl', label: 'Kesintisiz saha ve servis deneyimi' },
+        { value: '%99,9', label: 'Ters osmoz arıtma verimi' },
+        { value: '2 yıl', label: 'Tam kapsamlı garanti ve 7/24 destek' },
       ],
       founderName: 'Murat Bayram',
-      founderRole: 'Kurucu & Genel Müdür',
-      aboutHeading: '20 yıldır tek işimiz: güvenle içilen, temiz ve dengeli su.',
+      founderRole: 'Kurucu ve Genel Müdür',
+      aboutHeading: '20 yıldır tek işimiz: güvenle içilen, temiz ve dengeli su',
       aboutBody:
         "Aritman Su Arıtma Sistemleri, 20 yılı aşkın sektör deneyimiyle Gölcük, Kocaeli ve İstanbul genelinde 5.000'den fazla ev, kafe, restoran ve kamu kurumuna profesyonel su arıtma çözümleri sunmuştur. Her kurulumda şebeke suyunu yerinde analiz ediyor, NSF ve TSE onaylı membran ve filtre gruplarıyla uzun ömürlü, sessiz ve bakımı kolay sistemler teslim ediyoruz.",
       founderBio:

@@ -69,14 +69,14 @@ export function QuoteForm({
   )
 
   const inputCls =
-    'h-11 w-full rounded-xl border border-zinc-200 bg-white px-3.5 text-sm text-zinc-950 placeholder:text-zinc-400 transition-colors focus:border-zinc-950 focus:outline-none'
+    'h-10 w-full rounded-lg border border-[var(--input)] bg-[var(--background)] px-3 text-sm text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] transition-colors duration-150 focus:border-[var(--primary)] focus:bg-[var(--card)] focus:outline-none focus:ring-2 focus:ring-[var(--ring)]/20'
 
   return (
-    <div className="rounded-3xl border border-zinc-200/90 bg-white p-6 sm:p-9">
-      <h3 className="text-xl font-semibold tracking-tight text-zinc-950">
-        Ücretsiz Keşif &amp; Teklif Formu
+    <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-6 sm:p-8">
+      <h3 className="text-xl font-medium text-[var(--foreground)]">
+        Ücretsiz keşif ve teklif formu
       </h3>
-      <p className="mt-1.5 text-sm text-zinc-500">
+      <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">
         Bilgilerinizi bırakın, aynı gün içinde sizi arayıp su analizi ve uygun sistem için bilgi
         verelim.
       </p>
@@ -84,14 +84,19 @@ export function QuoteForm({
       {feedback && (
         <div
           role="status"
-          className={`mt-5 flex items-start gap-2.5 rounded-xl border px-4 py-3 text-sm ${
+          className={`mt-6 flex items-start gap-3 rounded-lg border px-4 py-3 text-sm ${
             feedback.type === 'success'
-              ? 'border-zinc-200 bg-zinc-50 text-zinc-950'
-              : 'border-rose-200 bg-rose-50 text-rose-800'
+              ? 'border-[var(--positive)]/25 bg-[var(--positive-soft)] text-[var(--foreground)]'
+              : 'border-[var(--negative)]/25 bg-[var(--negative-soft)] text-[var(--negative)]'
           }`}
         >
           {feedback.type === 'success' && (
-            <HugeiconsIcon icon={CheckmarkCircle02Icon} size={17} className="mt-0.5 shrink-0" />
+            <HugeiconsIcon
+              icon={CheckmarkCircle02Icon}
+              size={16}
+              strokeWidth={1.5}
+              className="mt-0.5 shrink-0 text-[var(--positive)]"
+            />
           )}
           <span>{feedback.text}</span>
         </div>
@@ -100,14 +105,17 @@ export function QuoteForm({
       <form onSubmit={handleSubmit} className="mt-6 space-y-4">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
-            <label htmlFor="quote-name" className="mb-1.5 block text-xs font-medium text-zinc-500">
-              Ad Soyad *
+            <label
+              htmlFor="quote-name"
+              className="mb-2 block text-xs font-medium text-[var(--text-secondary)]"
+            >
+              Ad soyad *
             </label>
             <input
               id="quote-name"
               type="text"
               required
-              placeholder="Örn: Ahmet Yılmaz"
+              placeholder="Ad soyad"
               className={inputCls}
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
@@ -115,15 +123,18 @@ export function QuoteForm({
           </div>
 
           <div>
-            <label htmlFor="quote-phone" className="mb-1.5 block text-xs font-medium text-zinc-500">
+            <label
+              htmlFor="quote-phone"
+              className="mb-2 block text-xs font-medium text-[var(--text-secondary)]"
+            >
               Telefon *
             </label>
             <input
               id="quote-phone"
               type="tel"
               required
-              placeholder="05XX XXX XX XX"
-              className={inputCls}
+              placeholder="0536 000 00 00"
+              className={`${inputCls} font-mono tabular-nums`}
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
             />
@@ -134,14 +145,14 @@ export function QuoteForm({
           <div>
             <label
               htmlFor="quote-district"
-              className="mb-1.5 block text-xs font-medium text-zinc-500"
+              className="mb-2 block text-xs font-medium text-[var(--text-secondary)]"
             >
-              İl / İlçe
+              İl / ilçe
             </label>
             <input
               id="quote-district"
               type="text"
-              placeholder="Örn: Gölcük / Kocaeli"
+              placeholder="Gölcük / Kocaeli"
               className={inputCls}
               value={district}
               onChange={(e) => setDistrict(e.target.value)}
@@ -151,9 +162,9 @@ export function QuoteForm({
           <div>
             <label
               htmlFor="quote-service"
-              className="mb-1.5 block text-xs font-medium text-zinc-500"
+              className="mb-2 block text-xs font-medium text-[var(--text-secondary)]"
             >
-              İlgilendiğiniz Sistem
+              İlgilendiğiniz sistem
             </label>
             <select
               id="quote-service"
@@ -165,33 +176,36 @@ export function QuoteForm({
               <option value="Kurumsal / Kafe / Ofis RO Sistemi">Kurumsal / Kafe / Ofis RO</option>
               <option value="Reçineli Su Yumuşatma Sistemi">Reçineli Su Yumuşatma</option>
               <option value="Periyodik Filtre Değişimi / Bakım">Periyodik Filtre Değişimi</option>
-              <option value="Yerinde Su Analizi & Keşif">Yerinde Su Analizi &amp; Keşif</option>
+              <option value="Yerinde Su Analizi & Keşif">Yerinde Su Analizi ve Keşif</option>
             </select>
           </div>
         </div>
 
         <div>
-          <label htmlFor="quote-message" className="mb-1.5 block text-xs font-medium text-zinc-500">
-            Kısa Notunuz (Opsiyonel)
+          <label
+            htmlFor="quote-message"
+            className="mb-2 block text-xs font-medium text-[var(--text-secondary)]"
+          >
+            Kısa not (isteğe bağlı)
           </label>
           <textarea
             id="quote-message"
             rows={4}
-            placeholder="Mutfak dolap yapınız, işletme kapasiteniz veya uygun olduğunuz saat aralığı..."
-            className="w-full rounded-xl border border-zinc-200 bg-white p-3.5 text-sm text-zinc-950 placeholder:text-zinc-400 transition-colors focus:border-zinc-950 focus:outline-none"
+            placeholder="Mutfak dolabı, işletme kapasitesi veya uygun olduğunuz saat aralığı"
+            className="w-full rounded-lg border border-[var(--input)] bg-[var(--background)] p-3 text-sm text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] transition-colors duration-150 focus:border-[var(--primary)] focus:bg-[var(--card)] focus:outline-none focus:ring-2 focus:ring-[var(--ring)]/20"
             value={message}
             onChange={(e) => setMessage(e.target.value)}
           />
         </div>
 
-        <div className="flex flex-wrap items-center gap-2.5 pt-2">
+        <div className="flex flex-wrap items-center gap-3 pt-2">
           <Button type="submit" variant="ocean" size="md" disabled={submitting}>
-            {submitting ? 'Gönderiliyor...' : 'Keşif Talebi Gönder'}
+            {submitting ? 'Gönderiliyor' : 'Keşif talebi gönder'}
           </Button>
-          <Button variant="whatsapp" size="md" asChild>
+          <Button variant="outline" size="md" asChild>
             <a href={directWaUrl} target="_blank" rel="noopener noreferrer">
-              <span>WhatsApp&apos;tan Yaz</span>
-              <HugeiconsIcon icon={ArrowUpRight01Icon} size={15} strokeWidth={1.8} />
+              <span>WhatsApp&apos;tan yaz</span>
+              <HugeiconsIcon icon={ArrowUpRight01Icon} size={16} strokeWidth={1.5} />
             </a>
           </Button>
         </div>

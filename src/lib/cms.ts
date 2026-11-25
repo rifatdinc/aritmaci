@@ -31,9 +31,9 @@ export async function getSiteSettings(): Promise<SiteSettingsDoc> {
     mapsQuery:
       data?.mapsQuery ||
       'Dumlupınar Mahallesi Ondokuz Mayıs Caddesi 46. Sokak No 8 Kat 4 Gölcük Kocaeli',
-    heroEyebrow: data?.heroEyebrow || 'GÖLCÜK / KOCAELİ & İSTANBUL • 20 YILLIK SAHA DENEYİMİ',
+    heroEyebrow: data?.heroEyebrow || 'Gölcük, Kocaeli ve İstanbul — 20 yıllık saha deneyimi',
     heroTitle:
-      data?.heroTitle || 'Eviniz ve işletmeniz için ölçülerek kurulan su arıtma sistemleri.',
+      data?.heroTitle || 'Eviniz ve işletmeniz için ölçülerek kurulan su arıtma sistemleri',
     heroSubtitle:
       data?.heroSubtitle ||
       'Kurulum öncesi yerinde su sertliği ve TDS ölçümü yapıyor, NSF ve TSE onaylı filtrelerle evinize veya işletmenize en doğru sistemi kuruyoruz.',
@@ -42,15 +42,15 @@ export async function getSiteSettings(): Promise<SiteSettingsDoc> {
       data?.stats && data.stats.length > 0
         ? data.stats
         : [
-            { value: '5.000+', label: 'Tamamlanan Ev & Kurum Kurulumu' },
-            { value: '20 Yıl', label: 'Kesintisiz Saha ve Servis Deneyimi' },
-            { value: '%99,9', label: 'Ters Osmoz Arıtma Verimi' },
-            { value: '2 Yıl', label: 'Tam Kapsamlı Garanti & 7/24 Destek' },
+            { value: '5.000+', label: 'Tamamlanan ev ve kurum kurulumu' },
+            { value: '20 yıl', label: 'Kesintisiz saha ve servis deneyimi' },
+            { value: '%99,9', label: 'Ters osmoz arıtma verimi' },
+            { value: '2 yıl', label: 'Tam kapsamlı garanti ve 7/24 destek' },
           ],
     founderName: data?.founderName || 'Murat Bayram',
-    founderRole: data?.founderRole || 'Kurucu & Genel Müdür',
+    founderRole: data?.founderRole || 'Kurucu ve Genel Müdür',
     aboutHeading:
-      data?.aboutHeading || '20 yıldır tek işimiz: güvenle içilen, temiz ve dengeli su.',
+      data?.aboutHeading || '20 yıldır tek işimiz: güvenle içilen, temiz ve dengeli su',
     aboutBody:
       data?.aboutBody ||
       "Aritman Su Arıtma Sistemleri, 20 yılı aşkın sektör deneyimiyle Gölcük, Kocaeli ve İstanbul genelinde 5.000'den fazla ev, kafe, restoran ve kamu kurumuna profesyonel su arıtma çözümleri sunmuştur.",

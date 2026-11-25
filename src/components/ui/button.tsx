@@ -4,25 +4,29 @@ import { cva, type VariantProps } from 'class-variance-authority'
 import React from 'react'
 
 export const buttonVariants = cva(
-  'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full text-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500/35 disabled:pointer-events-none disabled:opacity-50 cursor-pointer active:scale-[0.98]',
+  'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium transition-[background-color,border-color,color,transform] duration-150 ease-[cubic-bezier(0.22,1,0.36,1)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] disabled:pointer-events-none disabled:opacity-50 cursor-pointer active:scale-[0.98]',
   {
     variants: {
       variant: {
         primary:
-          'bg-zinc-950 text-white shadow-[0_1px_2px_rgba(0,0,0,0.12)] hover:bg-zinc-800 hover:shadow-[0_6px_20px_rgba(9,9,11,0.16)]',
+          'bg-[var(--foreground)] text-[var(--card)] shadow-[0_1px_2px_rgba(28,27,24,0.08)] hover:bg-[#2f2d28]',
         ocean:
-          'bg-sky-600 text-white shadow-[0_2px_10px_rgba(2,132,199,0.28)] hover:bg-sky-700 hover:shadow-[0_8px_24px_rgba(2,132,199,0.34)]',
+          'bg-[var(--primary)] text-[var(--primary-foreground)] shadow-[0_1px_2px_rgba(28,27,24,0.08)] hover:bg-[var(--primary-hover)]',
         whatsapp:
-          'bg-emerald-600 text-white shadow-[0_2px_10px_rgba(5,150,105,0.24)] hover:bg-emerald-700',
-        secondary: 'bg-sky-50 text-sky-900 hover:bg-sky-100',
+          'border border-[var(--border-strong)] bg-[var(--card)] text-[var(--foreground)] hover:bg-[var(--surface-raised)]',
+        secondary:
+          'border border-[var(--border)] bg-[var(--surface-raised)] text-[var(--foreground)] hover:border-[var(--border-strong)] hover:bg-[#e7e1d6]',
         outline:
-          'border border-slate-200 bg-white text-zinc-950 hover:border-sky-300 hover:bg-sky-50/40',
-        ghost: 'text-slate-600 hover:bg-slate-100 hover:text-zinc-950',
+          'border border-[var(--border-strong)] bg-[var(--card)] text-[var(--foreground)] hover:bg-[var(--surface-raised)]',
+        ghost:
+          'text-[var(--text-secondary)] hover:bg-[var(--surface-raised)] hover:text-[var(--foreground)]',
+        inverted:
+          'bg-[var(--dark-foreground)] text-[var(--surface-dark)] hover:bg-[#ffffff] focus-visible:ring-offset-[var(--surface-dark)]',
       },
       size: {
-        sm: 'h-9 px-4 text-[13px]',
-        md: 'h-10 px-5 text-sm',
-        lg: 'h-12 px-6 text-[14.5px]',
+        sm: 'h-9 px-4 text-sm',
+        md: 'h-10 px-4 text-sm',
+        lg: 'h-12 px-5 text-sm',
         icon: 'h-9 w-9',
       },
     },

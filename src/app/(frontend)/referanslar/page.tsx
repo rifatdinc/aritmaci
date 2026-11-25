@@ -23,21 +23,21 @@ export default async function ReferencesPage() {
   )
 
   return (
-    <section className="bg-white py-14 sm:py-20">
-      <div className="mx-auto max-w-[1200px] px-5 sm:px-6">
-        <div className="mb-3 flex items-center gap-2 font-mono text-xs text-zinc-400">
-          <Link href="/" className="hover:text-zinc-950">
-            Ana Sayfa
+    <section className="bg-[var(--background)] py-16 sm:py-20">
+      <div className="mx-auto max-w-[1200px] px-6">
+        <div className="mb-4 flex items-center gap-2 font-mono text-xs text-[var(--muted-foreground)]">
+          <Link href="/" className="transition-colors duration-150 hover:text-[var(--foreground)]">
+            Ana sayfa
           </Link>
           <span>/</span>
-          <span className="text-zinc-950">Referanslar</span>
+          <span className="text-[var(--foreground)]">Referanslar</span>
         </div>
 
         <div className="mb-12 max-w-2xl">
-          <h1 className="text-3xl font-semibold tracking-[-0.03em] text-zinc-950 sm:text-4xl">
-            Referanslar &amp; Tamamlanan Kurulumlar
+          <h1 className="text-[28px] font-medium leading-[1.15] tracking-[-0.02em] text-[var(--foreground)] sm:text-[36px]">
+            Referanslar ve tamamlanan kurulumlar
           </h1>
-          <p className="mt-3 text-[15.5px] leading-relaxed text-zinc-500">
+          <p className="mt-3 text-base leading-7 text-[var(--text-secondary)]">
             İstanbul ve Kocaeli genelinde kamu kurumları, belediye birimleri, kafe-restoranlar ve
             binlerce hanede güvenle çalışan sistemlerimiz.
           </p>
@@ -45,19 +45,19 @@ export default async function ReferencesPage() {
 
         <ReferenceGrid references={references} showFilters />
 
-        <div className="mt-16 flex flex-wrap items-center justify-between gap-6 rounded-3xl border border-zinc-200 bg-zinc-50 p-8 sm:p-10">
+        <div className="mt-16 flex flex-wrap items-center justify-between gap-6 rounded-2xl border border-[var(--border)] bg-[var(--surface-raised)] p-6 sm:p-8">
           <div>
-            <h2 className="text-xl font-semibold tracking-tight text-zinc-950 sm:text-2xl">
+            <h2 className="text-xl font-medium text-[var(--foreground)] sm:text-2xl">
               İşletmeniz veya eviniz için ücretsiz keşif planlayalım
             </h2>
-            <p className="mt-1.5 text-sm text-zinc-500">
+            <p className="mt-2 text-sm text-[var(--text-secondary)]">
               Şebeke suyunuzu yerinde analiz edip en doğru kapasitede sistem önerelim.
             </p>
           </div>
-          <Button variant="primary" size="md" asChild>
+          <Button variant="ocean" size="md" asChild>
             <a href={waHref} target="_blank" rel="noopener noreferrer">
-              <span>WhatsApp ile İletişime Geç</span>
-              <HugeiconsIcon icon={ArrowUpRight01Icon} size={15} strokeWidth={1.8} />
+              <span>WhatsApp ile iletişime geç</span>
+              <HugeiconsIcon icon={ArrowUpRight01Icon} size={16} strokeWidth={1.5} />
             </a>
           </Button>
         </div>
