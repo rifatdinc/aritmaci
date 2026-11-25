@@ -116,7 +116,7 @@ export function DeviceSelectorBar({
         </div>
         <div className="action-row">
           {product && (
-            <Button variant="default" asChild>
+            <Button variant="explore" asChild>
               <Link href={`/urunler/${product.slug}`}>
                 Ürünü incele <HugeiconsIcon icon={ArrowRight01Icon} size={17} aria-hidden="true" />
               </Link>

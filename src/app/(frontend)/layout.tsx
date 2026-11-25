@@ -3,6 +3,7 @@ import '@fontsource/playfair-display/latin-500-italic.css'
 import '@fontsource/playfair-display/latin-ext-500-italic.css'
 import { SiteFooter } from '@/components/SiteFooter'
 import { SiteHeader } from '@/components/SiteHeader'
+import { Button } from '@/components/ui/button'
 import { buildWhatsappUrl, getSiteSettings } from '@/lib/cms'
 import { WhatsappIcon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
@@ -39,16 +40,17 @@ export default async function FrontendLayout({ children }: { children: ReactNode
           {children}
         </main>
         <SiteFooter settings={settings} />
-        <a
-          href={waHref}
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label="WhatsApp ile iletişime geçin"
-          className="floating-whatsapp"
-        >
-          <HugeiconsIcon icon={WhatsappIcon} size={24} strokeWidth={1.65} aria-hidden="true" />
-          <span>WhatsApp</span>
-        </a>
+        <Button variant="whatsapp" size="lg" className="floating-whatsapp" asChild>
+          <a
+            href={waHref}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="WhatsApp ile iletişime geçin"
+          >
+            <HugeiconsIcon icon={WhatsappIcon} size={20} strokeWidth={1.65} aria-hidden="true" />
+            <span>WhatsApp</span>
+          </a>
+        </Button>
       </body>
     </html>
   )

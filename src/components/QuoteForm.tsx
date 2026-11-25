@@ -174,7 +174,7 @@ export function QuoteForm({
             />
           </Field>
           <div className="action-row form-wide">
-            <Button type="submit" variant="default" disabled={submitting}>
+            <Button type="submit" variant="consultation" size="lg" disabled={submitting}>
               {submitting ? 'Gönderiliyor…' : 'Keşif talebi gönder'}
               {submitting ? (
                 <ThinkingOrb state="working" size={20} theme="dark" aria-hidden="true" />
@@ -182,7 +182,7 @@ export function QuoteForm({
                 <HugeiconsIcon icon={ArrowRight01Icon} size={17} aria-hidden="true" />
               )}
             </Button>
-            <Button variant="outline" asChild>
+            <Button variant="whatsapp" size="lg" asChild>
               <a href={directWaUrl} target="_blank" rel="noopener noreferrer">
                 <HugeiconsIcon icon={WhatsappIcon} size={18} aria-hidden="true" /> WhatsApp&apos;tan
                 yaz

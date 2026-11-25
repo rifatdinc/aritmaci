@@ -117,7 +117,7 @@ export function SiteHeader({ settings }: { settings: SiteSettingsDoc }) {
         <div className="shell header-inner">
           <Brand settings={settings} />
           <Navigation pathname={pathname} />
-          <Button className="header-cta" asChild>
+          <Button variant="consultation" className="header-cta" asChild>
             <Link href="/iletisim#kesif-formu">
               Ücretsiz keşif{' '}
               <HugeiconsIcon icon={ArrowUpRight01Icon} data-icon="inline-end" aria-hidden="true" />
@@ -140,7 +140,7 @@ export function SiteHeader({ settings }: { settings: SiteSettingsDoc }) {
                 <Navigation pathname={pathname} mobile />
                 <SheetFooter>
                   <SheetClose asChild>
-                    <Button asChild>
+                    <Button variant="consultation" asChild>
                       <Link href="/iletisim#kesif-formu">Ücretsiz keşif</Link>
                     </Button>
                   </SheetClose>

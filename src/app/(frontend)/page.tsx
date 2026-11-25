@@ -93,7 +93,7 @@ export default async function HomePage() {
               <h2 id="products-heading">Su arıtma sistemleri</h2>
               <p>İçme suyu, kireç önleme ve filtre bakımı için çözümler.</p>
             </div>
-            <Button variant="outline" asChild>
+            <Button variant="explore" asChild>
               <Link href="/urunler">
                 Tüm ürünler <HugeiconsIcon icon={ArrowUpRight01Icon} size={18} aria-hidden="true" />
               </Link>
@@ -190,7 +190,7 @@ export default async function HomePage() {
               Cihazınızın bakım aralığını takip edin. Son filtre değişimi tarihinizle bir sonraki
               bakımı planlayabilirsiniz.
             </p>
-            <Button variant="outline" asChild>
+            <Button variant="service" asChild>
               <Link href="#iletisim">
                 Bakım için bize ulaşın{' '}
                 <HugeiconsIcon icon={ArrowUpRight01Icon} size={17} aria-hidden="true" />
@@ -209,7 +209,7 @@ export default async function HomePage() {
                 <h2>Kurumlar ve işletmeler</h2>
                 <p>Kocaeli ve İstanbul’da çalıştığımız kurumlar ve işletmeler.</p>
               </div>
-              <Button variant="outline" asChild>
+              <Button variant="explore" asChild>
                 <Link href="/referanslar">
                   Tüm referanslar{' '}
                   <HugeiconsIcon icon={ArrowUpRight01Icon} size={18} aria-hidden="true" />

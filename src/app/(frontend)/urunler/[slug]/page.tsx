@@ -78,7 +78,7 @@ export default async function ProductDetailPage({ params }: Props) {
             )}
             {product.priceNote && <p className="price-note">{product.priceNote}</p>}
             <div className="action-row">
-              <Button variant="default" asChild>
+              <Button variant="whatsapp" asChild>
                 <a href={waHref} target="_blank" rel="noopener noreferrer">
                   <HugeiconsIcon icon={WhatsappIcon} size={19} aria-hidden="true" />{' '}
                   WhatsApp&apos;tan fiyat al

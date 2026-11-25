@@ -129,7 +129,7 @@ export function InstallationGallery({ references }: { references: ReferenceDoc[]
             <h2 id="gallery-heading">Kurulumdan kareler</h2>
             <p>Mutfak dolabından bina girişine, sistemlerin nasıl yerleştiğini görün.</p>
           </div>
-          <Button variant="outline" asChild>
+          <Button variant="explore" asChild>
             <Link href="/referanslar">
               Kurulumları gör{' '}
               <HugeiconsIcon icon={ArrowUpRight01Icon} size={17} aria-hidden="true" />
@@ -188,7 +188,7 @@ export function ProductComparison({ products }: { products: ProductDoc[] }) {
             <h2 id="comparison-heading">Sistemleri karşılaştırın</h2>
             <p>Kapasiteyi, filtre yapısını ve garanti kapsamını yan yana görün.</p>
           </div>
-          <Button variant="outline" asChild>
+          <Button variant="explore" asChild>
             <Link href="#cihaz-secimi">
               Cihaz seçim rehberi{' '}
               <HugeiconsIcon icon={ArrowUpRight01Icon} size={17} aria-hidden="true" />

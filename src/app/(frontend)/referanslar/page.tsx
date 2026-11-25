@@ -33,7 +33,7 @@ export default async function ReferencesPage() {
             <h2>Sizin için de bir sistem seçelim</h2>
             <p>Şebeke suyunuzu yerinde ölçüp ihtiyacınıza uygun kapasiteyi önerelim.</p>
           </div>
-          <Button variant="default" asChild>
+          <Button variant="consultation" asChild>
             <Link href="/iletisim#kesif-formu">
               Ücretsiz keşif{' '}
               <HugeiconsIcon icon={ArrowUpRight01Icon} size={18} aria-hidden="true" />

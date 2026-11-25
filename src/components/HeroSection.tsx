@@ -29,7 +29,7 @@ export function HeroSection({
           <h1 id="hero-title">{settings.heroTitle}</h1>
           {settings.heroSubtitle && <p className="hero-description">{settings.heroSubtitle}</p>}
           <div className="action-row">
-            <Button size="lg" className="hero-primary px-4" asChild>
+            <Button variant="consultation" size="lg" asChild>
               <a href="#iletisim">
                 Ücretsiz keşif iste
                 <HugeiconsIcon
@@ -39,7 +39,7 @@ export function HeroSection({
                 />
               </a>
             </Button>
-            <Button variant="outline" size="lg" className="px-4" asChild>
+            <Button variant="explore" size="lg" asChild>
               <Link href="#urunler">
                 Cihazları incele
                 <HugeiconsIcon icon={ArrowDown01Icon} data-icon="inline-end" aria-hidden="true" />

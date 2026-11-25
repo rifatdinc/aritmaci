@@ -112,7 +112,7 @@ export function FilterCalculator({ whatsappNumber }: { whatsappNumber: string })
             </p>
           )}
         </div>
-        <Button variant="outline" asChild>
+        <Button variant="whatsapp" asChild>
           <a href={waHref} target="_blank" rel="noopener noreferrer">
             <HugeiconsIcon icon={WhatsappIcon} size={18} aria-hidden="true" /> Bakım randevusu al
           </a>
