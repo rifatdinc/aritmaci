@@ -928,41 +928,69 @@
   pointer-events: none;
 }
 .filtration-stream {
+  --diagram-gutter: clamp(0.55rem, 2vw, 1.4rem);
   position: relative;
-  padding: 0.75rem clamp(0.55rem, 2vw, 1.4rem);
-  border-block: 1px solid #e8eff4;
+  padding: 0.8rem var(--diagram-gutter) 0.85rem;
+  border-block: 1px solid #e3edf2;
   background: #fafcfd;
 }
 .filtration-stream-track {
-  position: relative;
-  transition-property: none;
   display: grid;
+  position: relative;
   place-items: center;
-  min-block-size: clamp(6rem, 11vw, 8.25rem);
+  block-size: clamp(7.35rem, 16vw, 11.5rem);
+  border: 1px solid #dce9ee;
   border-radius: var(--radius-lg);
+  overflow: clip;
   isolation: isolate;
   background:
-    radial-gradient(ellipse at 15% 50%, #f7eddf 0%, transparent 53%),
-    radial-gradient(ellipse at 85% 50%, #e2f3fa 0%, transparent 53%), #f7fafb;
-  box-shadow: inset 0 0 0 1px #e5edf1;
+    radial-gradient(ellipse at 17% 40%, #f4e6d58c, transparent 46%),
+    radial-gradient(ellipse at 84% 64%, #ceeff894, transparent 50%),
+    linear-gradient(180deg, #fff, #eff7fa);
+}
+.filtration-stream-track::before {
+  position: absolute;
+  inset: 0;
+  mask-image: radial-gradient(ellipse at center, #000, transparent 77%);
+  background: radial-gradient(circle, #37667c37 0 0.65px, transparent 0.8px) 0 0 / 12px 12px;
+  content: '';
+}
+.filtration-canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
 }
 .filtration-stream-toggle {
   display: none;
   position: absolute;
-  inset: 1rem calc(clamp(0.55rem, 2vw, 1.4rem) + 0.25rem) auto auto;
+  inset: 1.12rem calc(var(--diagram-gutter) + 0.32rem) auto auto;
   z-index: 1;
   color: var(--water-ink);
+  border-color: #e0e9ef;
   background: #fff;
+}
+@media (pointer: coarse) {
+  .filtration-stream-toggle {
+    min-inline-size: 2.75rem;
+    min-block-size: 2.75rem;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .filtration-stream-toggle {
+    display: inline-flex;
+  }
 }
 .filtration-stream-labels {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  align-items: start;
-  margin-block-start: 0.35rem;
-  color: #36566c;
-  font-size: clamp(0.68rem, 1.5vw, 0.82rem);
+  align-items: center;
+  margin-block-start: 0.62rem;
+  color: #28576d;
+  font-size: clamp(0.7rem, 1.5vw, 0.86rem);
   font-weight: 550;
-  line-height: 1.3;
+  line-height: 1.35;
   text-align: center;
 }
 .filtration-stream-labels > span {
@@ -970,11 +998,10 @@
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
-  align-self: center;
-  gap: 0.12rem 0.3rem;
+  gap: 0.15rem 0.35rem;
 }
 .filtration-stream-labels > span:first-child {
-  color: #745736;
+  color: #765536;
 }
 .filtration-stream-labels > span:nth-child(2) {
   color: var(--water-ink);
@@ -982,187 +1009,87 @@
 .filtration-outlet-orb {
   flex: none;
 }
-.filtration-channel {
+.filtration-still-water {
   position: absolute;
-  inset: 50% 0 auto;
-  block-size: clamp(2.25rem, 4vw, 3.1rem);
-  translate: 0 -50%;
-  overflow: clip;
-  mask-image: linear-gradient(to right, transparent 1%, #000 11%, #000 89%, transparent 99%);
-}
-.filtration-water {
-  position: absolute;
-  inset-block: 0;
-  inline-size: 50%;
-  overflow: clip;
-  background: var(--water-body);
-}
-.filtration-water-inlet {
-  inset-inline-start: 0;
-  --water-body: linear-gradient(
-    178deg,
-    #c4a77a00 2%,
-    #b58a52a1 28%,
-    #d5b68d 58%,
-    #d8b58f66 85%,
-    transparent 99%
-  );
-  border-radius: 27% 4% 5% 21% / 40% 12% 20% 45%;
-}
-.filtration-water-outlet {
-  inset-inline-end: 0;
-  --water-body: linear-gradient(
-    183deg,
-    #b4d9ec00 4%,
-    #92ccdfb8 30%,
-    #9bd4e6 57%,
-    #acdcea55 88%,
-    transparent 100%
-  );
-  border-radius: 4% 24% 22% 5% / 12% 48% 42% 20%;
-}
-.filtration-water::after {
-  --ripple-width: 4rem;
-  position: absolute;
-  inset: 0 calc(-1 * var(--ripple-width)) 0 0;
+  inset-inline: 0;
+  block-size: clamp(1.5rem, 4vw, 2.55rem);
+  mask-image: linear-gradient(90deg, transparent, #000 14% 86%, transparent);
   background:
-    radial-gradient(ellipse 27% 14% at 28% 37%, #fff9, transparent 100%),
-    radial-gradient(ellipse 24% 13% at 74% 62%, #fff6, transparent 100%);
-  background-size: var(--ripple-width) 100%;
-  content: '';
+    radial-gradient(circle, #805d40 0 1px, transparent 1.6px) 3% 40% / 20% 47% no-repeat,
+    radial-gradient(circle, #a17753 0 1px, transparent 1.6px) 21% 70% / 27% 61% no-repeat,
+    radial-gradient(circle, #eafaff 0 1px, transparent 1.6px) 78% 27% / 38% 67% no-repeat,
+    linear-gradient(90deg, #c79c68b5 42%, #9bcfdf 54%, #89cfe3ba);
 }
-.filtration-sediment {
-  position: absolute;
-  inset: 0 50% 0 0;
-  overflow: clip;
-  mask-image: linear-gradient(to right, #000 87%, transparent);
-}
-.filtration-particle {
-  position: absolute;
-  inset: 0;
-  translate: var(--particle-rest);
-}
-.filtration-grain,
-.filtration-bubble {
-  position: absolute;
-  inset: calc(50% + var(--particle-y)) auto auto 0;
-  inline-size: var(--particle-size);
-  block-size: var(--particle-size);
-  translate: -50% -50%;
-}
-.filtration-grain {
-  border-radius: 38% 64% 40% 56%;
-  background: #795235;
-  box-shadow: inset 1px 1px #b98d67;
-  opacity: 0.73;
-}
-.filtration-sediment .filtration-particle:nth-child(3n) .filtration-grain {
-  background: #a45f39;
-  scale: 0.76;
-}
-.filtration-bubble::before {
-  position: absolute;
-  transition-property: none;
-  inset: 0;
-  border: 1px solid #fff9;
-  border-radius: 50%;
-  background: radial-gradient(circle at 35% 30%, #fff 8%, #ffffff38 49%, #b5dbe557 72%, #fff7);
-  box-shadow: 0 1px 2px #30607630;
-  opacity: 0.87;
-  scale: var(--filtration-bubble-scale);
-  content: '';
-}
-.filtration-particle:nth-of-type(even) .filtration-bubble::before {
-  opacity: var(--filtration-bubble-density);
+.filtration-canvas[data-ready='true'] + .filtration-still-water {
+  display: none;
 }
 .filtration-cartridge {
   position: relative;
-  inline-size: clamp(2.55rem, 7vw, 4.5rem);
-  block-size: clamp(3.9rem, 8vw, 6.05rem);
-  border: 1px solid #7194a6;
-  border-radius: 0.55rem;
-  background:
-    radial-gradient(circle at 27% 42%, #7952359e 1.4px, transparent 2.4px),
-    radial-gradient(circle at 21% 53%, #795235a6 1.8px, transparent 2.8px),
-    radial-gradient(circle at 33% 59%, #a45f399e 1px, transparent 2px),
-    linear-gradient(180deg, #e8f3f8a6, transparent 33% 67%, #a9c7d899),
-    repeating-linear-gradient(90deg, #456b7c38 0 1px, #ffffff30 1px 3px, transparent 3px 6px),
-    linear-gradient(90deg, #49788da6, #fff6 24% 69%, #5b90aaa6);
+  inline-size: clamp(4.6rem, 17%, 11rem);
+  block-size: clamp(3.45rem, 8vw, 5.65rem);
+  border: 1px solid #588397;
+  border-radius: 0.85rem;
+  background: linear-gradient(180deg, #e7f5fb9c, #edf9ff1f 35% 66%, #7eaabd65);
   box-shadow:
-    0 4px 10px #264d6929,
-    inset 0 0 0 2px #f3fafd8c;
+    0 10px 14px -8px #1d445c82,
+    inset 0 1px 2px #fff,
+    inset 0 -1px 4px #47788b68;
+}
+.filtration-cartridge-glass {
+  position: absolute;
+  inset: 0.27rem 0.35rem;
+  border: 1px solid #3f778069;
+  border-radius: 0.52rem;
+  background:
+    linear-gradient(163deg, #fff9 0 21%, transparent 39%),
+    linear-gradient(180deg, #143a531f, #f8fdff33 35% 70%, #3f82974d),
+    linear-gradient(90deg, #59483312, #f6f9f015 47%, #9fd9e221 49%, #81c4d541);
+  box-shadow: inset 0 1px 2px #3e6d7750;
+}
+.filtration-cartridge-membrane {
+  position: absolute;
+  inset: 0.26rem auto 0.26rem 47%;
+  inline-size: 23%;
+  border-inline: 1px solid #4a7486af;
+  border-radius: 0.22rem;
+  background:
+    linear-gradient(180deg, #dae7edb0, #fbffff3e 30%, #94bccc33 61%, #527d92b5),
+    repeating-linear-gradient(90deg, #345c6e80 0 1px, #e7f5f9b0 1px 2px, #6e9fb48c 2px 4px);
+  box-shadow: 1px 0 4px #315c7147;
 }
 .filtration-cartridge::before,
 .filtration-cartridge::after {
   position: absolute;
-  inset-inline: -0.22rem;
-  block-size: 0.55rem;
-  border: 1px solid #6d91a5;
-  border-radius: 0.3rem;
-  background: linear-gradient(180deg, #f6fbff 0%, #c8dee9 46%, #87aabc 100%);
-  box-shadow: 0 1px 3px #31556a33;
+  inset-block: -0.17rem;
+  inline-size: clamp(0.35rem, 0.7vw, 0.59rem);
+  border: 1px solid #426d84;
+  border-radius: 0.32rem;
+  background:
+    linear-gradient(90deg, #7298a9, #f4fcff80 52%, #6c91a5a6),
+    linear-gradient(180deg, #a8c6d5, #f2faff 23%, #a8c4d6 55%, #648da4);
+  box-shadow: 0 3px 5px #24485b37;
   content: '';
 }
 .filtration-cartridge::before {
-  inset-block-start: 0.12rem;
+  inset-inline-start: -0.12rem;
 }
 .filtration-cartridge::after {
-  inset-block-end: 0.12rem;
+  inset-inline-end: -0.12rem;
 }
-@property --filtration-sway {
-  syntax: '<length>';
-  inherits: true;
-  initial-value: 6px;
-}
-@media (prefers-reduced-motion: no-preference) {
-  .filtration-stream-toggle {
-    display: inline-flex;
-  }
+@media (max-width: 30rem) {
   .filtration-stream-track {
-    transition: --filtration-sway var(--filtration-profile-response) ease-out;
+    block-size: 8.5rem;
   }
-  .filtration-water::after {
-    animation: filtration-ripple 2.8s linear infinite;
+  .filtration-cartridge,
+  .filtration-still-water {
+    translate: 0 0.45rem;
   }
-  .filtration-particle {
-    animation: filtration-current var(--particle-travel) linear var(--particle-delay) infinite;
+  .filtration-stream-labels > span {
+    column-gap: 0.24rem;
   }
-  .filtration-channel .filtration-bubble {
-    animation: filtration-buoyancy var(--bubble-sway-period) ease-in-out var(--bubble-sway-delay)
-      infinite alternate;
-  }
-  .filtration-bubble::before {
-    transition:
-      opacity var(--filtration-profile-response) ease-out,
-      scale var(--filtration-profile-response) ease-out;
-  }
-  .filtration-stream[data-paused='true'] :is(.filtration-particle, .filtration-bubble),
-  .filtration-stream[data-paused='true'] .filtration-water::after {
-    animation-play-state: paused;
-  }
-}
-@keyframes filtration-current {
-  from {
-    translate: -4%;
-  }
-  to {
-    translate: 104%;
-  }
-}
-@keyframes filtration-buoyancy {
-  from {
-    transform: translateY(calc(-1 * var(--filtration-sway) * var(--bubble-lift))) scale(1.04, 0.96);
-  }
-  to {
-    transform: translateY(calc(var(--filtration-sway) * var(--bubble-lift))) scale(0.96, 1.04);
-  }
-}
-@keyframes filtration-ripple {
-  from {
-    translate: calc(-1 * var(--ripple-width));
-  }
-  to {
-    translate: 0;
+  .filtration-stream-labels > span:first-child svg {
+    inline-size: 0.84rem;
+    block-size: 0.84rem;
   }
 }
 .stage-panels {

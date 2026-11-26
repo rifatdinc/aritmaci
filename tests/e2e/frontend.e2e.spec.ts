@@ -67,35 +67,42 @@ test('fits all five filtration stages above the panel on a tablet', async ({ pag
   expect(listBox!.y + listBox!.height).toBeLessThan(panelBox!.y)
 })
 
-test('changes the water current between stages and respects reduced motion', async ({ page }) => {
+test('keeps water flowing between stages and supports pausing and reduced motion', async ({
+  page,
+}) => {
   await page.emulateMedia({ reducedMotion: 'no-preference' })
   await page.goto('http://localhost:3000/#filtration-heading')
-  await page.getByRole('tab', { name: '04 RO membran' }).click()
-
-  const track = page.locator('.filtration-stream-track')
-  const readCurrent = () =>
-    track.evaluate((element) => {
-      const current = element
-        .getAnimations({ subtree: true })
-        .find(
-          (animation) =>
-            animation instanceof CSSAnimation && animation.animationName === 'filtration-current',
-        )
-      return { speed: current?.playbackRate ?? 0, time: Number(current?.currentTime ?? 0) }
+  const canvas = page.locator('canvas.filtration-canvas')
+  const readFrame = () => canvas.evaluate((element: HTMLCanvasElement) => element.toDataURL())
+  const readTwoFrames = () =>
+    canvas.evaluate(async (element: HTMLCanvasElement) => {
+      const first = element.toDataURL()
+      for (let frame = 0; frame < 5; frame++) {
+        await new Promise(requestAnimationFrame)
+      }
+      return [first, element.toDataURL()]
     })
 
-  await expect.poll(async () => (await readCurrent()).speed).toBe(0.72)
-  const before = await readCurrent()
+  await canvas.scrollIntoViewIfNeeded()
+  await expect(canvas).toHaveAttribute('data-ready', 'true')
+  const initial = await readFrame()
+  await expect.poll(async () => (await readFrame()) !== initial).toBe(true)
 
+  await page.getByRole('button', { name: 'Otomatik geçişi duraklat' }).click()
+  const [paused, stillPaused] = await readTwoFrames()
+  expect(stillPaused === paused).toBe(true)
+  await page.getByRole('button', { name: 'Otomatik geçişi başlat' }).click()
+  await expect.poll(async () => (await readFrame()) !== paused).toBe(true)
+
+  await page.getByRole('tab', { name: '04 RO membran' }).click()
   await page.getByRole('tab', { name: '05 Tat düzenleyici' }).click()
-  await expect.poll(async () => (await readCurrent()).speed).toBeGreaterThan(before.speed)
-  expect((await readCurrent()).time).toBeGreaterThan(before.time)
+  const switched = await readFrame()
+  await expect.poll(async () => (await readFrame()) !== switched).toBe(true)
 
   await page.emulateMedia({ reducedMotion: 'reduce' })
   await expect(page.locator('.filtration-stream button')).toBeHidden()
-  expect(await track.evaluate((element) => element.getAnimations({ subtree: true }))).toHaveLength(
-    0,
-  )
+  const [reduced, stillReduced] = await readTwoFrames()
+  expect(stillReduced === reduced).toBe(true)
 })
 
 test('cycles the visible filtration stages every four seconds and can be paused', async ({

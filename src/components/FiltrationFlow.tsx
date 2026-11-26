@@ -1,5 +1,6 @@
 'use client'
 
+import { mountFiltrationAnimation, type FlowProfile } from '@/components/filtration-animation'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { WaterOrb } from '@/components/WaterOrb'
@@ -84,26 +85,6 @@ const STAGES = [
 ]
 
 const STAGE_ADVANCE_DELAY = 4000
-function makeParticles(count: number, travelSeconds: number, diameter: number) {
-  return Array.from({ length: count }, (_, index) => {
-    const travelTime = travelSeconds * (1 + ((index * 7) % 11) * 0.035)
-    const start = (index + 0.5) / count
-
-    return {
-      '--particle-travel': `${travelTime}s`,
-      '--particle-delay': `${-start * travelTime}s`,
-      '--particle-rest': `${start * 100}%`,
-      '--particle-y': `${((index * 7) % 11) * 2.5 - 12.5}px`,
-      '--bubble-sway-period': `${1.15 + ((index * 3) % 7) * 0.19}s`,
-      '--bubble-sway-delay': `${-(index % 13) * 0.23}s`,
-      '--bubble-lift': 0.4 + ((index * 5) % 9) * 0.075,
-      '--particle-size': `${diameter + ((index * 5) % 6)}px`,
-    } as CSSProperties
-  })
-}
-
-const BUBBLES = makeParticles(28, 5.5, 4)
-const SEDIMENT = makeParticles(16, 3, 2)
 
 function WaterStream({
   profile,
@@ -111,90 +92,41 @@ function WaterStream({
   rotationEnabled,
   onToggleRotation,
 }: {
-  profile: (typeof STAGES)[number]['stream']
+  profile: FlowProfile
   paused: boolean
   rotationEnabled: boolean
   onToggleRotation: () => void
 }) {
-  const track = useRef<HTMLDivElement>(null)
-  const [visible, setVisible] = useState(false)
+  const canvas = useRef<HTMLCanvasElement>(null)
+  const membrane = useRef<HTMLSpanElement>(null)
+  const scene = useRef<ReturnType<typeof mountFiltrationAnimation>>(undefined)
   const label = rotationEnabled ? 'Otomatik geçişi duraklat' : 'Otomatik geçişi başlat'
 
   useEffect(() => {
-    const element = track.current
-    if (!element) return
+    if (!canvas.current || !membrane.current) return
 
-    let inViewport = false
-    const updateVisibility = () => setVisible(inViewport && !document.hidden)
-    const observer = new IntersectionObserver(([entry]) => {
-      inViewport = entry.isIntersecting
-      updateVisibility()
-    })
-    observer.observe(element)
-    document.addEventListener('visibilitychange', updateVisibility)
-    return () => {
-      observer.disconnect()
-      document.removeEventListener('visibilitychange', updateVisibility)
-    }
+    const animation = mountFiltrationAnimation(canvas.current, membrane.current, STAGES[0].stream)
+    scene.current = animation
+    return () => animation?.dispose()
   }, [])
 
   useEffect(() => {
-    const element = track.current
-    if (!element) return
-
-    const motionPreference = window.matchMedia('(prefers-reduced-motion: no-preference)')
-    const updateCurrentSpeed = () => {
-      if (!motionPreference.matches) return
-
-      for (const animation of element.getAnimations({ subtree: true })) {
-        if (
-          animation instanceof CSSAnimation &&
-          ['filtration-current', 'filtration-ripple'].includes(animation.animationName)
-        ) {
-          // Keep each particle in place when changing the current speed.
-          animation.updatePlaybackRate(profile.speed)
-        }
-      }
-    }
-
-    updateCurrentSpeed()
-    motionPreference.addEventListener('change', updateCurrentSpeed)
-    return () => motionPreference.removeEventListener('change', updateCurrentSpeed)
-  }, [profile.speed])
+    scene.current?.update(profile, !paused)
+  }, [paused, profile])
 
   return (
-    <div className="filtration-stream" data-paused={paused || !visible}>
+    <div className="filtration-stream">
       <div
-        ref={track}
         className="filtration-stream-track"
         role="img"
         aria-label="Soldan gelen tortulu su filtreden geçer. Tortu filtrede kalır, sağdan berrak su çıkar."
-        style={
-          {
-            '--filtration-sway': `${profile.spread}px`,
-            '--filtration-bubble-scale': profile.scale,
-            '--filtration-bubble-density': 0.4 + profile.density * 0.4,
-            '--filtration-profile-response': `${spring.slow.duration}s`,
-          } as CSSProperties
-        }
       >
-        <div className="filtration-channel">
-          <div className="filtration-water filtration-water-inlet" />
-          <div className="filtration-water filtration-water-outlet" />
-          {BUBBLES.map((style, index) => (
-            <span key={index} className="filtration-particle" style={style}>
-              <span className="filtration-bubble" />
-            </span>
-          ))}
-          <div className="filtration-sediment">
-            {SEDIMENT.map((style, index) => (
-              <span key={index} className="filtration-particle" style={style}>
-                <span className="filtration-grain" />
-              </span>
-            ))}
-          </div>
+        <canvas ref={canvas} className="filtration-canvas" aria-hidden="true" />
+        <div className="filtration-still-water" aria-hidden="true" />
+        <div className="filtration-cartridge" aria-hidden="true">
+          <span className="filtration-cartridge-glass" />
+          <span className="filtration-cartridge-membrane" ref={membrane} />
         </div>
-        <div className="filtration-cartridge" />
       </div>
       <Button
         type="button"
