@@ -8,6 +8,7 @@ import sharp from 'sharp'
 import { fileURLToPath } from 'url'
 
 import { Faqs } from './collections/Faqs'
+import { HomeVideos } from './collections/HomeVideos'
 import { Media } from './collections/Media'
 import { Products } from './collections/Products'
 import { QuoteRequests } from './collections/QuoteRequests'
@@ -15,6 +16,7 @@ import { References } from './collections/References'
 import { Testimonials } from './collections/Testimonials'
 import { Users } from './collections/Users'
 import { SiteSettings } from './globals/SiteSettings'
+import { ensureHomeVideos } from './migrations/ensureHomeVideos'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -33,7 +35,7 @@ export default buildConfig({
     fallbackLanguage: 'tr',
     supportedLanguages: { tr, en },
   },
-  collections: [Products, References, Testimonials, Faqs, QuoteRequests, Media, Users],
+  collections: [Products, References, Testimonials, Faqs, QuoteRequests, Media, HomeVideos, Users],
   globals: [SiteSettings],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || 'aritman-dev-secret-change-in-production',
@@ -45,6 +47,9 @@ export default buildConfig({
       url: process.env.DATABASE_URL || 'file:./data/aritman.db',
     },
   }),
+  onInit: async ({ db }) => {
+    if (process.env.NODE_ENV === 'production') await ensureHomeVideos(db)
+  },
   sharp,
   plugins: [],
 })

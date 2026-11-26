@@ -5,6 +5,7 @@ import { FilterCalculator } from '@/components/FilterCalculator'
 import { FiltrationFlow } from '@/components/FiltrationFlow'
 import { HeroSection } from '@/components/HeroSection'
 import { InstallationGallery, ProductComparison, UsageScenarios } from '@/components/HomeSections'
+import { HomeVideoSection } from '@/components/HomeVideoSection'
 import { ProductCatalog } from '@/components/ProductCatalog'
 import { ReferenceGrid } from '@/components/ReferenceGrid'
 import { WaterOrbMotion } from '@/components/WaterOrb'
@@ -12,6 +13,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import {
   getFaqs,
+  getHomeVideo,
   getMediaUrl,
   getProducts,
   getReferences,
@@ -42,12 +44,13 @@ const installationSteps = [
 ]
 
 export default async function HomePage() {
-  const [settings, products, references, testimonials, faqs] = await Promise.all([
+  const [settings, products, references, testimonials, faqs, video] = await Promise.all([
     getSiteSettings(),
     getProducts(),
     getReferences(),
     getTestimonials(),
     getFaqs(),
+    getHomeVideo(),
   ])
   const homeProducts = products.slice(0, 4)
   const aboutHeading = settings.aboutHeading || 'Arıtman hakkında'
@@ -86,6 +89,7 @@ export default async function HomePage() {
 
       <UsageScenarios products={products} />
       <InstallationGallery references={references} />
+      {video && <HomeVideoSection video={video} />}
 
       <section id="urunler" className="page-section" aria-labelledby="products-heading">
         <div className="shell">

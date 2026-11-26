@@ -73,6 +73,7 @@ export interface Config {
     faqs: Faq;
     'quote-requests': QuoteRequest;
     media: Media;
+    'home-videos': HomeVideo;
     users: User;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
@@ -87,6 +88,7 @@ export interface Config {
     faqs: FaqsSelect<false> | FaqsSelect<true>;
     'quote-requests': QuoteRequestsSelect<false> | QuoteRequestsSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
+    'home-videos': HomeVideosSelect<false> | HomeVideosSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
@@ -287,6 +289,37 @@ export interface QuoteRequest {
   status?: ('yeni' | 'arandi' | 'kesif-planlandi' | 'tamamlandi') | null;
   updatedAt: string;
   createdAt: string;
+}
+/**
+ * Yayındaki videolardan en son kaydedilen ana sayfada görünür.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "home-videos".
+ */
+export interface HomeVideo {
+  id: number;
+  title: string;
+  description?: string | null;
+  /**
+   * Bir YouTube bağlantısı yazarsanız oynatıcı bu bağlantıyı kullanır. Dosya yükleyecekseniz MP4 veya WebM seçin (en fazla 20 MB).
+   */
+  youtubeUrl?: string | null;
+  /**
+   * Yüklenen video oynatılmadan önce gösterilecek görsel.
+   */
+  poster?: (number | null) | Media;
+  published?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
 }
 /**
  * Yönetim paneline giriş yapabilecek yetkili hesaplar.
@@ -545,6 +578,28 @@ export interface MediaSelect<T extends boolean = true> {
               filename?: T;
             };
       };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "home-videos_select".
+ */
+export interface HomeVideosSelect<T extends boolean = true> {
+  title?: T;
+  description?: T;
+  youtubeUrl?: T;
+  poster?: T;
+  published?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  url?: T;
+  thumbnailURL?: T;
+  filename?: T;
+  mimeType?: T;
+  filesize?: T;
+  width?: T;
+  height?: T;
+  focalX?: T;
+  focalY?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

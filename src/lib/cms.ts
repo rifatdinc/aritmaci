@@ -1,3 +1,4 @@
+import type { HomeVideo } from '@/payload-types'
 import config from '@/payload.config'
 import { getPayload } from 'payload'
 import type {
@@ -113,4 +114,16 @@ export async function getFaqs(): Promise<FaqDoc[]> {
     depth: 0,
   })
   return res.docs as unknown as FaqDoc[]
+}
+
+export async function getHomeVideo(): Promise<HomeVideo | undefined> {
+  const payload = await getPayload({ config })
+  const { docs } = await payload.find({
+    collection: 'home-videos',
+    where: { published: { equals: true } },
+    sort: ['-updatedAt', '-id'],
+    limit: 1,
+    depth: 1,
+  })
+  return docs[0]
 }
