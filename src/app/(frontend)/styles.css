@@ -1084,6 +1084,9 @@
   .filtration-still-water {
     translate: 0 0.45rem;
   }
+  .filtration-still-water {
+    block-size: clamp(0.85rem, 3.8vw, 1.15rem);
+  }
   .filtration-stream-labels > span {
     column-gap: 0.24rem;
   }

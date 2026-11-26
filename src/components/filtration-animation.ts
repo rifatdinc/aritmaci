@@ -7,6 +7,10 @@ const FLOW_SAMPLES = 90
 const interpolate = (start: number, end: number, amount: number) => start + (end - start) * amount
 const unit = (value: number) => Math.max(0, Math.min(1, value))
 
+function flowScale(width: number) {
+  return interpolate(0.55, 1, unit((width - 280) / 280))
+}
+
 function particles(count: number) {
   return Array.from({ length: count }, (_, index) => ({
     phase: (index + ((index * 7) % 9) / 12) / count,
@@ -49,14 +53,21 @@ function drawRibbon(
   upper: number,
   lower: number,
 ) {
+  const scale = flowScale(width)
   context.beginPath()
   for (let i = 0; i <= FLOW_SAMPLES; i++) {
     const x = i / FLOW_SAMPLES
-    context.lineTo(x * width, middle + centerAt(x, phase) + thicknessAt(x, phase, depth) * upper)
+    context.lineTo(
+      x * width,
+      middle + centerAt(x, phase) * scale + thicknessAt(x, phase, depth) * upper,
+    )
   }
   for (let i = FLOW_SAMPLES; i >= 0; i--) {
     const x = i / FLOW_SAMPLES
-    context.lineTo(x * width, middle + centerAt(x, phase) + thicknessAt(x, phase, depth) * lower)
+    context.lineTo(
+      x * width,
+      middle + centerAt(x, phase) * scale + thicknessAt(x, phase, depth) * lower,
+    )
   }
   context.closePath()
   context.fill()
@@ -69,17 +80,19 @@ function drawReflections(
   time: number,
   depth: number,
 ) {
+  const scale = flowScale(width)
   context.fillStyle = '#fff'
   for (const { phase, rate, lane, size } of reflections) {
     const start = (phase + time * rate * 0.18) % 1
     const length = (17 + size * Math.min(76, width * 0.1)) / width
-    const height = 0.55 + size * 1.2
+    const height = (0.55 + size * 1.2) * scale
 
     const coordinates = (index: number, edge: number) => {
       const progress = index / 10
       const x = start + progress * length
-      const drift = Math.sin(x * 21 - time * 2 + phase * TAU) * 2
-      const y = middle + centerAt(x, time) + thicknessAt(x, time, depth) * lane * 0.73 + drift
+      const drift = Math.sin(x * 21 - time * 2 + phase * TAU) * 2 * scale
+      const y =
+        middle + centerAt(x, time) * scale + thicknessAt(x, time, depth) * lane * 0.73 + drift
       context.lineTo(x * width, y + edge * height * Math.sin(progress * Math.PI))
     }
 
@@ -101,18 +114,21 @@ function drawBubbles(
   depth: number,
   profile: FlowProfile,
 ) {
+  const scale = flowScale(width)
+  const bubbleScale = Math.sqrt(scale)
   for (const { phase, rate, lane, size, angle } of bubbles) {
     const x = (phase + time * rate * 0.2) % 1
-    const radius = (0.6 + size ** 2 * Math.min(3.8, width * 0.012)) * profile.scale
-    const wobble = Math.sin(angle + time * 2.8 + x * 16) * profile.spread * 0.42
-    const y = middle + centerAt(x, time) + thicknessAt(x, time, depth) * lane * 0.71 + wobble
+    const radius = (0.6 + size ** 2 * Math.min(3.8, width * 0.012)) * profile.scale * bubbleScale
+    const wobble = Math.sin(angle + time * 2.8 + x * 16) * profile.spread * 0.42 * scale
+    const y =
+      middle + centerAt(x, time) * scale + thicknessAt(x, time, depth) * lane * 0.71 + wobble
     context.globalAlpha = (0.55 + 0.45 * profile.density) * unit(Math.min(x, 1 - x) * 11)
     context.beginPath()
     context.ellipse(x * width, y, radius * 1.08, radius, angle, 0, TAU)
     context.fillStyle = size > 0.6 ? '#e8f9ff73' : '#f4fdff'
     context.fill()
     if (size > 0.6) {
-      context.lineWidth = 0.8
+      context.lineWidth = 0.8 * bubbleScale
       context.strokeStyle = '#f9ffffe6'
       context.stroke()
       context.beginPath()
@@ -132,14 +148,16 @@ function drawSediment(
   depth: number,
   membrane: number,
 ) {
+  const scale = flowScale(width)
   grit.forEach(({ phase, rate, lane, size, angle }, index) => {
     const cycle = (phase + time * rate * 0.27) % 1
     const progress = unit(cycle / 0.8)
     // Slow down at the membrane, linger there, then leave space for the next grain.
     const destination = membrane - size * 4
     const x = interpolate(0, destination, progress + 0.48 * progress ** 5 * (1 - progress))
-    const wobble = Math.sin(angle + time * 4.3 + progress * 8) * (1 - progress) * 4
-    const carriedY = centerAt(x / width, time) + thicknessAt(x / width, time, depth) * lane * 0.7
+    const wobble = Math.sin(angle + time * 4.3 + progress * 8) * (1 - progress) * 4 * scale
+    const carriedY =
+      centerAt(x / width, time) * scale + thicknessAt(x / width, time, depth) * lane * 0.7
     const y = middle + interpolate(carriedY, lane * depth * 0.72, progress ** 4) + wobble
     const radius = (0.65 + size * 2.2) * Math.min(1, width / 440)
     context.globalAlpha = 0.83 * unit(cycle * 12) * unit((1 - cycle) * 7)
@@ -182,7 +200,7 @@ export function mountFiltrationAnimation(
 
     context.clearRect(0, 0, width, height)
     context.fillStyle = shadow
-    drawRibbon(context, width, middle + 3, time, depth * 1.18, -0.73, 1.13)
+    drawRibbon(context, width, middle + 3 * flowScale(width), time, depth * 1.18, -0.73, 1.13)
     context.fillStyle = water
     drawRibbon(context, width, middle, time, depth, -0.96, 0.95)
 
@@ -236,7 +254,7 @@ export function mountFiltrationAnimation(
     membraneX = membraneRect.left - canvasRect.left
     middle = membraneRect.top + membraneRect.height / 2 - canvasRect.top
     const transition = membraneX / width
-    depth = Math.min(22, height * 0.158)
+    depth = Math.min(22, height * 0.158) * flowScale(width)
 
     water = context.createLinearGradient(0, 0, width, 0)
     water.addColorStop(0, '#b7804500')
