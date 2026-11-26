@@ -927,38 +927,187 @@
   border-block-end: 2px solid var(--water-primary);
   pointer-events: none;
 }
-.filtration-waterline {
-  display: flex;
-  align-items: center;
-  gap: clamp(0.3rem, 1.6vw, 1rem);
-  padding: 0.42rem clamp(0.6rem, 2vw, 1.4rem);
+.filtration-stream {
+  position: relative;
+  padding: 0.75rem clamp(0.55rem, 2vw, 1.4rem);
   border-block: 1px solid #e8eff4;
   background: #fafcfd;
 }
-.waterline-endpoint {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.3rem;
+.filtration-stream-track {
+  position: relative;
+  transition-property: none;
+  display: grid;
+  place-items: center;
+  min-block-size: clamp(6rem, 11vw, 8.25rem);
+  border-radius: var(--radius-lg);
+  isolation: isolate;
+  background:
+    radial-gradient(ellipse at 15% 50%, #f7eddf 0%, transparent 53%),
+    radial-gradient(ellipse at 85% 50%, #e2f3fa 0%, transparent 53%), #f7fafb;
+  box-shadow: inset 0 0 0 1px #e5edf1;
+}
+.filtration-stream-toggle {
+  display: none;
+  position: absolute;
+  inset: 1rem calc(clamp(0.55rem, 2vw, 1.4rem) + 0.25rem) auto auto;
+  z-index: 1;
+  color: var(--water-ink);
+  background: #fff;
+}
+.filtration-stream-labels {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: start;
+  margin-block-start: 0.35rem;
   color: #36566c;
-  font-size: 0.76rem;
+  font-size: clamp(0.68rem, 1.5vw, 0.82rem);
   font-weight: 550;
   line-height: 1.3;
+  text-align: center;
 }
-.waterline-endpoint svg {
+.filtration-stream-labels > span {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  align-self: center;
+  gap: 0.12rem 0.3rem;
+}
+.filtration-stream-labels > span:first-child {
+  color: #745736;
+}
+.filtration-stream-labels > span:nth-child(2) {
+  color: var(--water-ink);
+}
+.filtration-outlet-orb {
   flex: none;
-  color: var(--water-primary);
 }
-.waterline-orb {
-  flex: none;
+.filtration-channel {
+  position: absolute;
+  inset: 50% 0 auto;
+  block-size: clamp(2.25rem, 4vw, 3.1rem);
+  translate: 0 -50%;
+  overflow: clip;
+  mask-image: linear-gradient(to right, transparent 1%, #000 11%, #000 89%, transparent 99%);
 }
-.waterline-spine {
-  min-inline-size: 2rem;
-  min-block-size: 1rem;
-  flex: 1;
-  background: linear-gradient(to right, #d2e8eb, #c9dfed) center / 100% 1px no-repeat;
+.filtration-water {
+  position: absolute;
+  inset-block: 0;
+  inline-size: 50%;
+  overflow: clip;
+  background: var(--water-body);
 }
-.filtration-stream {
-  display: none;
+.filtration-water-inlet {
+  inset-inline-start: 0;
+  --water-body: linear-gradient(
+    178deg,
+    #c4a77a00 2%,
+    #b58a52a1 28%,
+    #d5b68d 58%,
+    #d8b58f66 85%,
+    transparent 99%
+  );
+  border-radius: 27% 4% 5% 21% / 40% 12% 20% 45%;
+}
+.filtration-water-outlet {
+  inset-inline-end: 0;
+  --water-body: linear-gradient(
+    183deg,
+    #b4d9ec00 4%,
+    #92ccdfb8 30%,
+    #9bd4e6 57%,
+    #acdcea55 88%,
+    transparent 100%
+  );
+  border-radius: 4% 24% 22% 5% / 12% 48% 42% 20%;
+}
+.filtration-water::after {
+  --ripple-width: 4rem;
+  position: absolute;
+  inset: 0 calc(-1 * var(--ripple-width)) 0 0;
+  background:
+    radial-gradient(ellipse 27% 14% at 28% 37%, #fff9, transparent 100%),
+    radial-gradient(ellipse 24% 13% at 74% 62%, #fff6, transparent 100%);
+  background-size: var(--ripple-width) 100%;
+  content: '';
+}
+.filtration-sediment {
+  position: absolute;
+  inset: 0 50% 0 0;
+  overflow: clip;
+  mask-image: linear-gradient(to right, #000 87%, transparent);
+}
+.filtration-particle {
+  position: absolute;
+  inset: 0;
+  translate: var(--particle-rest);
+}
+.filtration-grain,
+.filtration-bubble {
+  position: absolute;
+  inset: calc(50% + var(--particle-y)) auto auto 0;
+  inline-size: var(--particle-size);
+  block-size: var(--particle-size);
+  translate: -50% -50%;
+}
+.filtration-grain {
+  border-radius: 38% 64% 40% 56%;
+  background: #795235;
+  box-shadow: inset 1px 1px #b98d67;
+  opacity: 0.73;
+}
+.filtration-sediment .filtration-particle:nth-child(3n) .filtration-grain {
+  background: #a45f39;
+  scale: 0.76;
+}
+.filtration-bubble::before {
+  position: absolute;
+  transition-property: none;
+  inset: 0;
+  border: 1px solid #fff9;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #fff 8%, #ffffff38 49%, #b5dbe557 72%, #fff7);
+  box-shadow: 0 1px 2px #30607630;
+  opacity: 0.87;
+  scale: var(--filtration-bubble-scale);
+  content: '';
+}
+.filtration-particle:nth-of-type(even) .filtration-bubble::before {
+  opacity: var(--filtration-bubble-density);
+}
+.filtration-cartridge {
+  position: relative;
+  inline-size: clamp(2.55rem, 7vw, 4.5rem);
+  block-size: clamp(3.9rem, 8vw, 6.05rem);
+  border: 1px solid #7194a6;
+  border-radius: 0.55rem;
+  background:
+    radial-gradient(circle at 27% 42%, #7952359e 1.4px, transparent 2.4px),
+    radial-gradient(circle at 21% 53%, #795235a6 1.8px, transparent 2.8px),
+    radial-gradient(circle at 33% 59%, #a45f399e 1px, transparent 2px),
+    linear-gradient(180deg, #e8f3f8a6, transparent 33% 67%, #a9c7d899),
+    repeating-linear-gradient(90deg, #456b7c38 0 1px, #ffffff30 1px 3px, transparent 3px 6px),
+    linear-gradient(90deg, #49788da6, #fff6 24% 69%, #5b90aaa6);
+  box-shadow:
+    0 4px 10px #264d6929,
+    inset 0 0 0 2px #f3fafd8c;
+}
+.filtration-cartridge::before,
+.filtration-cartridge::after {
+  position: absolute;
+  inset-inline: -0.22rem;
+  block-size: 0.55rem;
+  border: 1px solid #6d91a5;
+  border-radius: 0.3rem;
+  background: linear-gradient(180deg, #f6fbff 0%, #c8dee9 46%, #87aabc 100%);
+  box-shadow: 0 1px 3px #31556a33;
+  content: '';
+}
+.filtration-cartridge::before {
+  inset-block-start: 0.12rem;
+}
+.filtration-cartridge::after {
+  inset-block-end: 0.12rem;
 }
 @property --filtration-sway {
   syntax: '<length>';
@@ -966,73 +1115,30 @@
   initial-value: 6px;
 }
 @media (prefers-reduced-motion: no-preference) {
-  .filtration-stream {
-    display: flex;
-    align-items: center;
-    gap: 0.25rem;
-    background: #fafcfd;
+  .filtration-stream-toggle {
+    display: inline-flex;
   }
   .filtration-stream-track {
-    position: relative;
-    flex: 1;
-    block-size: 2.75rem;
-    overflow: clip;
-    mask-image: linear-gradient(to right, transparent, #000 10%, #000 90%, transparent);
-    background: linear-gradient(to right, #c4e3df, #c4dfef) center / 100% 1px no-repeat;
-    --filtration-profile-response: 240ms;
     transition: --filtration-sway var(--filtration-profile-response) ease-out;
   }
+  .filtration-water::after {
+    animation: filtration-ripple 2.8s linear infinite;
+  }
   .filtration-particle {
-    position: absolute;
-    inset: 0;
-    --bubble-visibility: 0.82;
-    animation: filtration-current var(--bubble-travel) cubic-bezier(0.35, 0.28, 0.66, 0.74)
-      var(--bubble-travel-delay) infinite;
+    animation: filtration-current var(--particle-travel) linear var(--particle-delay) infinite;
   }
-  .filtration-particle:nth-child(2n) {
-    --bubble-visibility: var(--filtration-bubble-density);
-  }
-  .filtration-stream[data-paused='true'] :is(.filtration-particle, .filtration-bubble) {
-    animation-play-state: paused;
-  }
-  .filtration-bubble {
-    position: absolute;
-    inset: 50% auto auto 0;
-    inline-size: var(--bubble-diameter);
-    block-size: var(--bubble-diameter);
-    translate: -50% -50%;
+  .filtration-channel .filtration-bubble {
     animation: filtration-buoyancy var(--bubble-sway-period) ease-in-out var(--bubble-sway-delay)
       infinite alternate;
   }
   .filtration-bubble::before {
-    position: absolute;
-    inset: 0;
-    border: 1px solid currentColor;
-    border-radius: 50%;
-    color: var(--filtration-bubble-tint);
-    background: radial-gradient(circle at 34% 30%, #fff 0 12%, transparent 39%),
-      radial-gradient(circle at 42% 36%, #f4fcff 24%, #bce3f0 100%);
-    opacity: var(--bubble-visibility);
-    scale: var(--filtration-bubble-scale);
-    transition-property: color, opacity, scale;
-    transition-duration: var(--filtration-profile-response);
-    transition-timing-function: ease-out;
-    content: '';
+    transition:
+      opacity var(--filtration-profile-response) ease-out,
+      scale var(--filtration-profile-response) ease-out;
   }
-}
-@media (max-width: 32rem) {
-  .filtration-waterline {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.2rem 0.6rem;
-    padding-block-start: 0.64rem;
-  }
-  .waterline-endpoint:last-child {
-    justify-self: end;
-  }
-  .waterline-spine {
-    grid-column: 1 / -1;
-    grid-row: 2;
+  .filtration-stream[data-paused='true'] :is(.filtration-particle, .filtration-bubble),
+  .filtration-stream[data-paused='true'] .filtration-water::after {
+    animation-play-state: paused;
   }
 }
 @keyframes filtration-current {
@@ -1049,6 +1155,14 @@
   }
   to {
     transform: translateY(calc(var(--filtration-sway) * var(--bubble-lift))) scale(0.96, 1.04);
+  }
+}
+@keyframes filtration-ripple {
+  from {
+    translate: calc(-1 * var(--ripple-width));
+  }
+  to {
+    translate: 0;
   }
 }
 .stage-panels {

@@ -31,7 +31,7 @@ const STAGES = [
     description:
       'Şebeke suyunun ilk durağı. Filtre, borulardan gelen kum ve pas parçacıklarını tutarak suyu karbon filtrelerine hazırlar.',
     functionLabel: 'Tuttuğu parçacıklar',
-    stream: { speed: 0.95, spread: 13, scale: 1.08, density: 0.88, tint: '#328488' },
+    stream: { speed: 0.95, spread: 13, scale: 1.08, density: 0.88 },
   },
   {
     step: '02',
@@ -43,7 +43,7 @@ const STAGES = [
     description:
       'Su, geniş yüzeyli aktif karbon granüllerinin arasından geçer. Bu yüzey, suda kokuya ve tada etki eden bazı bileşikleri tutar.',
     functionLabel: 'Azaltmaya yardımcı olduğu',
-    stream: { speed: 1.13, spread: 9, scale: 0.92, density: 0.62, tint: '#317991' },
+    stream: { speed: 1.13, spread: 9, scale: 0.92, density: 0.62 },
   },
   {
     step: '03',
@@ -55,7 +55,7 @@ const STAGES = [
     description:
       'Sıkıştırılmış karbon, suyu daha ince gözeneklerden geçirir. Kalan parçacıkları ve klorun bir bölümünü tutarak ters osmoz membranını korur.',
     functionLabel: 'Bu aşamanın görevi',
-    stream: { speed: 0.9, spread: 6, scale: 0.82, density: 0.43, tint: '#387da7' },
+    stream: { speed: 0.9, spread: 6, scale: 0.82, density: 0.43 },
   },
   {
     step: '04',
@@ -67,7 +67,7 @@ const STAGES = [
     description:
       'Basınçlı su, yarı geçirgen membrana ulaşır. Membrandan geçen su bir sonraki filtreye ilerlerken ayrılan maddelerin yoğunlaştığı su atık hattına yönelir.',
     functionLabel: 'Azaltmaya yardımcı olduğu',
-    stream: { speed: 0.72, spread: 3, scale: 0.73, density: 0.24, tint: '#3e82af' },
+    stream: { speed: 0.72, spread: 3, scale: 0.73, density: 0.24 },
   },
   {
     step: '05',
@@ -79,25 +79,31 @@ const STAGES = [
     description:
       'Arıtılmış su, musluğa ulaşmadan önce hindistan cevizi bazlı son karbon filtresinden geçer. Bu aşama tat ve koku düzenlemesine yardımcı olur.',
     functionLabel: 'Çıkış suyunda',
-    stream: { speed: 1.22, spread: 8, scale: 1.04, density: 0.12, tint: '#3a91be' },
+    stream: { speed: 1.22, spread: 8, scale: 1.04, density: 0.12 },
   },
 ]
 
 const STAGE_ADVANCE_DELAY = 4000
-const BUBBLE_COUNT = 30
-const BUBBLES = Array.from({ length: BUBBLE_COUNT }, (_, index) => {
-  const travelTime = 5.5 + ((index * 7) % 11) * 0.34
-  const swayTime = 1.15 + ((index * 3) % 7) * 0.19
+function makeParticles(count: number, travelSeconds: number, diameter: number) {
+  return Array.from({ length: count }, (_, index) => {
+    const travelTime = travelSeconds * (1 + ((index * 7) % 11) * 0.035)
+    const start = (index + 0.5) / count
 
-  return {
-    '--bubble-travel': `${travelTime}s`,
-    '--bubble-travel-delay': `${-(index / BUBBLE_COUNT) * travelTime}s`,
-    '--bubble-sway-period': `${swayTime}s`,
-    '--bubble-sway-delay': `${-(index % 13) * 0.23}s`,
-    '--bubble-lift': 0.4 + ((index * 5) % 9) * 0.075,
-    '--bubble-diameter': `${4 + ((index * 5) % 7)}px`,
-  } as CSSProperties
-})
+    return {
+      '--particle-travel': `${travelTime}s`,
+      '--particle-delay': `${-start * travelTime}s`,
+      '--particle-rest': `${start * 100}%`,
+      '--particle-y': `${((index * 7) % 11) * 2.5 - 12.5}px`,
+      '--bubble-sway-period': `${1.15 + ((index * 3) % 7) * 0.19}s`,
+      '--bubble-sway-delay': `${-(index % 13) * 0.23}s`,
+      '--bubble-lift': 0.4 + ((index * 5) % 9) * 0.075,
+      '--particle-size': `${diameter + ((index * 5) % 6)}px`,
+    } as CSSProperties
+  })
+}
+
+const BUBBLES = makeParticles(28, 5.5, 4)
+const SEDIMENT = makeParticles(16, 3, 2)
 
 function WaterStream({
   profile,
@@ -111,7 +117,26 @@ function WaterStream({
   onToggleRotation: () => void
 }) {
   const track = useRef<HTMLDivElement>(null)
+  const [visible, setVisible] = useState(false)
   const label = rotationEnabled ? 'Otomatik geçişi duraklat' : 'Otomatik geçişi başlat'
+
+  useEffect(() => {
+    const element = track.current
+    if (!element) return
+
+    let inViewport = false
+    const updateVisibility = () => setVisible(inViewport && !document.hidden)
+    const observer = new IntersectionObserver(([entry]) => {
+      inViewport = entry.isIntersecting
+      updateVisibility()
+    })
+    observer.observe(element)
+    document.addEventListener('visibilitychange', updateVisibility)
+    return () => {
+      observer.disconnect()
+      document.removeEventListener('visibilitychange', updateVisibility)
+    }
+  }, [])
 
   useEffect(() => {
     const element = track.current
@@ -122,8 +147,11 @@ function WaterStream({
       if (!motionPreference.matches) return
 
       for (const animation of element.getAnimations({ subtree: true })) {
-        if (animation instanceof CSSAnimation && animation.animationName === 'filtration-current') {
-          // Change the current without resetting any bubble's position.
+        if (
+          animation instanceof CSSAnimation &&
+          ['filtration-current', 'filtration-ripple'].includes(animation.animationName)
+        ) {
+          // Keep each particle in place when changing the current speed.
           animation.updatePlaybackRate(profile.speed)
         }
       }
@@ -135,36 +163,61 @@ function WaterStream({
   }, [profile.speed])
 
   return (
-    <div className="filtration-stream" data-paused={paused}>
+    <div className="filtration-stream" data-paused={paused || !visible}>
       <div
         ref={track}
         className="filtration-stream-track"
-        aria-hidden="true"
+        role="img"
+        aria-label="Soldan gelen tortulu su filtreden geçer. Tortu filtrede kalır, sağdan berrak su çıkar."
         style={
           {
             '--filtration-sway': `${profile.spread}px`,
             '--filtration-bubble-scale': profile.scale,
-            '--filtration-bubble-density': profile.density,
-            '--filtration-bubble-tint': profile.tint,
+            '--filtration-bubble-density': 0.4 + profile.density * 0.4,
+            '--filtration-profile-response': `${spring.slow.duration}s`,
           } as CSSProperties
         }
       >
-        {BUBBLES.map((style, index) => (
-          <span key={index} className="filtration-particle" style={style}>
-            <span className="filtration-bubble" />
-          </span>
-        ))}
+        <div className="filtration-channel">
+          <div className="filtration-water filtration-water-inlet" />
+          <div className="filtration-water filtration-water-outlet" />
+          {BUBBLES.map((style, index) => (
+            <span key={index} className="filtration-particle" style={style}>
+              <span className="filtration-bubble" />
+            </span>
+          ))}
+          <div className="filtration-sediment">
+            {SEDIMENT.map((style, index) => (
+              <span key={index} className="filtration-particle" style={style}>
+                <span className="filtration-grain" />
+              </span>
+            ))}
+          </div>
+        </div>
+        <div className="filtration-cartridge" />
       </div>
       <Button
         type="button"
         variant="ghost"
         size="icon-sm"
+        className="filtration-stream-toggle"
         aria-label={label}
         title={label}
         onClick={onToggleRotation}
       >
         <HugeiconsIcon icon={rotationEnabled ? PauseIcon : PlayIcon} aria-hidden="true" />
       </Button>
+      <div className="filtration-stream-labels">
+        <span>
+          <HugeiconsIcon icon={WaterEnergyIcon} size={17} aria-hidden="true" />
+          Şebeke suyu
+        </span>
+        <span>Arıtma filtresi</span>
+        <span>
+          <WaterOrb className="filtration-outlet-orb" state="working" speed={0.7} paused={paused} />
+          Arıtılmış su
+        </span>
+      </div>
     </div>
   )
 }
@@ -306,29 +359,12 @@ export function FiltrationFlow() {
               ))}
             </motion.div>
           </TabsList>
-          <div className="filtration-waterline">
-            <span className="waterline-endpoint">
-              <HugeiconsIcon icon={WaterEnergyIcon} size={17} aria-hidden="true" />
-              Şebeke suyu
-            </span>
-            <div className="waterline-spine">
-              <WaterStream
-                profile={STAGES[activeStageIndex].stream}
-                paused={rotation === 'paused'}
-                rotationEnabled={rotationEnabled}
-                onToggleRotation={() => setRotation(rotationEnabled ? 'paused' : 'playing')}
-              />
-            </div>
-            <span className="waterline-endpoint">
-              <WaterOrb
-                className="waterline-orb"
-                state="working"
-                speed={0.7}
-                paused={rotation === 'paused'}
-              />
-              Arıtılmış su
-            </span>
-          </div>
+          <WaterStream
+            profile={STAGES[activeStageIndex].stream}
+            paused={rotation === 'paused'}
+            rotationEnabled={rotationEnabled}
+            onToggleRotation={() => setRotation(rotationEnabled ? 'paused' : 'playing')}
+          />
           <div
             className="stage-panels"
             style={{ '--stage-panel-duration': `${spring.slow.duration}s` } as CSSProperties}
