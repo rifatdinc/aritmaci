@@ -93,7 +93,7 @@ export function FilterCalculator({ whatsappNumber }: { whatsappNumber: string })
       <div className="tool-output">
         <div aria-live="polite" aria-atomic="true">
           <span className="result-label">
-            <WaterOrb state="breathing" cue={result?.date} /> Önerilen bakım tarihi
+            <WaterOrb state="breathing" /> Önerilen bakım tarihi
           </span>
           {result ? (
             <>

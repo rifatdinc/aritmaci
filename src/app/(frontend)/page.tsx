@@ -7,6 +7,7 @@ import { HeroSection } from '@/components/HeroSection'
 import { InstallationGallery, ProductComparison, UsageScenarios } from '@/components/HomeSections'
 import { ProductCatalog } from '@/components/ProductCatalog'
 import { ReferenceGrid } from '@/components/ReferenceGrid'
+import { WaterOrbMotion } from '@/components/WaterOrb'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import {
@@ -73,7 +74,7 @@ export default async function HomePage() {
   }
 
   return (
-    <>
+    <WaterOrbMotion>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, '\\u003c') }}
@@ -314,6 +315,6 @@ export default async function HomePage() {
       <div className="home-contact">
         <ContactSection settings={settings} />
       </div>
-    </>
+    </WaterOrbMotion>
   )
 }

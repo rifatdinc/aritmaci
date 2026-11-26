@@ -2,6 +2,7 @@
 
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { WaterOrb } from '@/components/WaterOrb'
 import { spring } from '@/lib/springs'
 import {
   ArrowRight01Icon,
@@ -16,7 +17,6 @@ import {
 import { HugeiconsIcon } from '@hugeicons/react'
 import { motion, MotionConfig } from 'motion/react'
 import { useEffect, useId, useRef, useState, type CSSProperties } from 'react'
-import { ThinkingOrb } from 'thinking-orbs'
 
 const panelExit = { ...spring.slow.exit, ease: 'easeOut' } as const
 
@@ -320,14 +320,10 @@ export function FiltrationFlow() {
               />
             </div>
             <span className="waterline-endpoint">
-              <ThinkingOrb
-                aria-hidden="true"
+              <WaterOrb
                 className="waterline-orb"
                 state="working"
-                size={20}
                 speed={0.7}
-                theme="light"
-                color="#24718f"
                 paused={rotation === 'paused'}
               />
               Arıtılmış su

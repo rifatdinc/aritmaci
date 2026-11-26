@@ -323,8 +323,8 @@
   inline-size: 2rem;
   block-size: 2rem;
   border-radius: var(--radius-md);
-  background: var(--primary);
-  color: var(--primary-foreground);
+  background: linear-gradient(145deg var(--gradient-space), #234778, #115f76 65%, #12727e) #174d75;
+  color: #eefbff;
 }
 .brand-mark svg {
   width: 1.16rem;
@@ -446,6 +446,13 @@
   gap: 1.05rem;
   padding-block: clamp(2.5rem, 6vw, 5rem);
 }
+.hero-area-badge {
+  border-color: var(--water-line);
+  color: var(--water-ink);
+}
+.hero-area-badge svg {
+  color: #216587;
+}
 .hero-copy h1 {
   max-inline-size: 19ch;
   font-size: clamp(2.55rem, 5.4vw, 4.35rem);
@@ -496,6 +503,14 @@
 .hero-analysis-orb {
   flex: none;
 }
+.orb-motion-toggle {
+  flex: none;
+  color: var(--water-primary);
+}
+.orb-motion-toggle:hover {
+  background: var(--water-surface);
+  color: var(--water-ink);
+}
 .hero-caption strong,
 .hero-caption > span {
   display: block;
@@ -515,6 +530,20 @@
   }
   .hero-caption > span:not(.hero-analysis-orb) {
     grid-column: 2;
+  }
+  .hero-caption .orb-motion-toggle {
+    grid-column: 3;
+    grid-row: 1 / span 2;
+  }
+}
+@media (max-width: 38rem) and (prefers-reduced-motion: no-preference) {
+  .hero-caption:has(.orb-motion-toggle) {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .orb-motion-toggle {
+    display: none;
   }
 }
 

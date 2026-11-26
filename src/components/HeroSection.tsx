@@ -1,6 +1,6 @@
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { WaterOrb } from '@/components/WaterOrb'
+import { WaterOrb, WaterOrbMotionToggle } from '@/components/WaterOrb'
 import type { SiteSettingsDoc } from '@/lib/types'
 import { ArrowDown01Icon, ArrowUpRight01Icon, Location01Icon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
@@ -21,7 +21,10 @@ export function HeroSection({
       <div className="shell">
         <div className="hero-copy">
           {(settings.heroEyebrow || settings.serviceArea) && (
-            <Badge variant="outline" className="h-auto gap-1.5 px-2.5 py-1 whitespace-normal">
+            <Badge
+              variant="outline"
+              className="hero-area-badge h-auto gap-1.5 px-2.5 py-1 whitespace-normal"
+            >
               <HugeiconsIcon icon={Location01Icon} aria-hidden="true" />
               {settings.heroEyebrow || settings.serviceArea}
             </Badge>
@@ -66,6 +69,7 @@ export function HeroSection({
           <WaterOrb state="searching" size={32} className="hero-analysis-orb" />
           <strong>Yerinde su analizi</strong>
           <span>Kurulum öncesi TDS ve sertlik ölçümü</span>
+          <WaterOrbMotionToggle />
         </figcaption>
       </figure>
     </section>

@@ -1,46 +1,68 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { Button } from '@/components/ui/button'
+import { PauseIcon, PlayIcon } from '@hugeicons/core-free-icons'
+import { HugeiconsIcon } from '@hugeicons/react'
+import { createContext, useContext, useState, type ReactNode } from 'react'
 import { ThinkingOrb, type OrbState } from 'thinking-orbs'
 
-const ORB_MOTION_MS = 2800
+const OrbMotion = createContext<{ paused: boolean; toggle: () => void } | null>(null)
+
+export function WaterOrbMotion({ children }: { children: ReactNode }) {
+  const [paused, setPaused] = useState(false)
+  return (
+    <OrbMotion.Provider value={{ paused, toggle: () => setPaused((current) => !current) }}>
+      {children}
+    </OrbMotion.Provider>
+  )
+}
+
+export function WaterOrbMotionToggle() {
+  const motion = useContext(OrbMotion)
+  if (!motion) return null
+
+  const label = motion.paused ? 'Küre animasyonlarını sürdür' : 'Küre animasyonlarını duraklat'
+
+  return (
+    <Button
+      variant="ghost"
+      size="icon-sm"
+      type="button"
+      className="orb-motion-toggle"
+      aria-label={label}
+      title={label}
+      onClick={motion.toggle}
+    >
+      <HugeiconsIcon icon={motion.paused ? PlayIcon : PauseIcon} aria-hidden="true" />
+    </Button>
+  )
+}
 
 export function WaterOrb({
   state,
   size = 20,
-  cue,
+  speed,
+  paused = false,
   className,
 }: {
   state: OrbState
   size?: 20 | 32
-  cue?: string
+  speed?: number
+  paused?: boolean
   className?: string
 }) {
-  const ref = useRef<HTMLSpanElement>(null)
-  const [playing, setPlaying] = useState(false)
-
-  useEffect(() => {
-    const anchor = ref.current
-    if (!anchor) return
-
-    let timeout: number | undefined
-    const observer = new IntersectionObserver(([entry]) => {
-      if (!entry.isIntersecting) return
-      observer.disconnect()
-      setPlaying(true)
-      timeout = window.setTimeout(() => setPlaying(false), ORB_MOTION_MS)
-    })
-    observer.observe(anchor)
-
-    return () => {
-      observer.disconnect()
-      window.clearTimeout(timeout)
-    }
-  }, [cue])
+  const motion = useContext(OrbMotion)
 
   return (
-    <span ref={ref} aria-hidden="true" className={className}>
-      <ThinkingOrb state={state} size={size} theme="light" color="#24718f" paused={!playing} />
+    <span aria-hidden="true" className={className}>
+      <ThinkingOrb
+        state={state}
+        size={size}
+        speed={speed}
+        theme="light"
+        color="#24718f"
+        paused={paused || motion?.paused}
+      />
     </span>
   )
 }

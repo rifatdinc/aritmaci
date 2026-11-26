@@ -98,7 +98,7 @@ export function DeviceSelectorBar({
       <div className="tool-output">
         <div aria-live="polite" aria-atomic="true">
           <span className="result-label">
-            <WaterOrb state="connecting" cue={product?.slug} /> Önerilen sistem
+            <WaterOrb state="connecting" /> Önerilen sistem
           </span>
           <motion.div
             key={product?.slug ?? 'empty'}
