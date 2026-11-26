@@ -185,11 +185,11 @@
   --action-shadow: #204b7619;
 }
 .gradient-action[data-variant='service'] {
-  --action-start: #613e4c;
-  --action-middle: #814e57;
-  --action-end: #8a5140;
-  --action-edge: #6b424b;
-  --action-shadow: #723f432d;
+  --action-start: #1c4268;
+  --action-middle: #195b7e;
+  --action-end: #157386;
+  --action-edge: #225676;
+  --action-shadow: #1c597532;
 }
 @media (hover: hover) {
   .gradient-action:where(:not(:disabled)):hover {
